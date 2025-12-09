@@ -56,26 +56,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('Signup successful, user data:', data);
 
     if (data.user) {
-      // Try to insert profile, but don't fail signup if it already exists
+      // Ensure profile exists for the user
       try {
-        const { error: profileError } = await supabase
+        // First try to insert the profile
+        const { error: insertError } = await supabase
           .from('profiles')
           .insert({
             id: data.user.id,
             name,
           });
 
-        if (profileError) {
-          if (profileError.code === '23505') { // 23505 is duplicate key error
-            console.log('Profile already exists for user, skipping creation');
+        // If insert fails with duplicate key error, update existing profile
+        if (insertError) {
+          if (insertError.code === '23505') { // 23505 is duplicate key error
+            console.log('Profile already exists for user, updating name if empty');
+            // Try to update the profile name if it's empty
+            await supabase
+              .from('profiles')
+              .update({ name })
+              .eq('id', data.user.id);
           } else {
-            console.warn('Profile insertion error (not critical):', profileError);
+            console.error('Critical profile creation error:', insertError);
+            throw new Error('Failed to create user profile: ' + insertError.message);
           }
         } else {
           console.log('Profile created successfully');
         }
       } catch (profileError) {
-        console.warn('Non-critical profile creation error:', profileError);
+        console.error('Critical profile creation error:', profileError);
+        throw new Error('Failed to create user profile');
       }
     }
   };
