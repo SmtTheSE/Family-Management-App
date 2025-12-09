@@ -36,12 +36,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refreshUser]);
 
   const signUp = async (email: string, password: string, name: string) => {
+    console.log('Attempting signup with:', { email });
+    
+    // Check if Supabase client is properly configured
+    if (!supabase) {
+      throw new Error('Supabase client is not properly initialized');
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
+
+    console.log('Signup successful, user data:', data);
 
     if (data.user) {
       // Try to insert profile, but don't fail signup if it already exists
@@ -53,8 +65,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             name,
           });
 
-        if (profileError && profileError.code !== '23505') { // 23505 is duplicate key error
-          console.warn('Profile insertion error (not critical):', profileError);
+        if (profileError) {
+          if (profileError.code === '23505') { // 23505 is duplicate key error
+            console.log('Profile already exists for user, skipping creation');
+          } else {
+            console.warn('Profile insertion error (not critical):', profileError);
+          }
+        } else {
+          console.log('Profile created successfully');
         }
       } catch (profileError) {
         console.warn('Non-critical profile creation error:', profileError);
@@ -63,12 +81,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('Attempting signin with:', { email });
+    
+    // Check if Supabase client is properly configured
+    if (!supabase) {
+      throw new Error('Supabase client is not properly initialized');
+    }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Signin error:', error);
+      throw error;
+    }
     
     // Refresh user after sign in
     await refreshUser();

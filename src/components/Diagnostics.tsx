@@ -6,7 +6,9 @@ export function Diagnostics() {
     supabaseUrl: '',
     supabaseAnonKey: '',
     clientInitialized: false,
-    error: ''
+    error: '',
+    authStatus: 'unknown',
+    authError: null as any
   });
 
   useEffect(() => {
@@ -22,11 +24,16 @@ export function Diagnostics() {
         supabaseUrl,
         supabaseAnonKey: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'NOT FOUND',
         clientInitialized,
-        error: ''
+        error: '',
+        authStatus: 'checking',
+        authError: null
       });
       
       // Log the Supabase client to verify it's properly initialized
       console.log('Supabase client:', supabase);
+      
+      // Test authentication
+      testAuth();
     } catch (error) {
       setDiagnostics(prev => ({
         ...prev,
@@ -34,6 +41,36 @@ export function Diagnostics() {
       }));
     }
   }, []);
+
+  const testAuth = async () => {
+    try {
+      setDiagnostics(prev => ({ ...prev, authStatus: 'testing' }));
+      
+      // Try to get the current session
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        setDiagnostics(prev => ({ 
+          ...prev, 
+          authStatus: 'error', 
+          authError: error 
+        }));
+        return;
+      }
+      
+      setDiagnostics(prev => ({ 
+        ...prev, 
+        authStatus: data.session ? 'authenticated' : 'unauthenticated',
+        authError: null
+      }));
+    } catch (error) {
+      setDiagnostics(prev => ({ 
+        ...prev, 
+        authStatus: 'error', 
+        authError: error 
+      }));
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -71,7 +108,37 @@ export function Diagnostics() {
                 {diagnostics.clientInitialized ? 'Yes' : 'No'}
               </span>
             </div>
+            <div>
+              <span className="font-medium">Auth Status:</span>
+              <span className={`ml-2 px-2 py-1 rounded text-sm ${
+                diagnostics.authStatus === 'authenticated' ? 'bg-green-100 text-green-800' :
+                diagnostics.authStatus === 'unauthenticated' ? 'bg-yellow-100 text-yellow-800' :
+                diagnostics.authStatus === 'error' ? 'bg-red-100 text-red-800' :
+                'bg-gray-100 text-gray-800'
+              }`}>
+                {diagnostics.authStatus}
+              </span>
+            </div>
+            
+            {diagnostics.authError && (
+              <div className="mt-2">
+                <span className="font-medium">Auth Error:</span>
+                <div className="font-mono text-sm break-all bg-red-50 p-2 rounded mt-1 text-red-700">
+                  {JSON.stringify(diagnostics.authError, null, 2)}
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+        
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-blue-800 mb-2">Troubleshooting Steps</h2>
+          <ol className="list-decimal list-inside space-y-2 text-blue-700">
+            <li>If environment variables show "NOT FOUND", they are not properly configured in your deployment</li>
+            <li>If client is not initialized, there's an issue with the Supabase client setup</li>
+            <li>If auth status is "error", check the auth error details above</li>
+            <li>Make sure to set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment</li>
+          </ol>
         </div>
         
         {diagnostics.error && (
