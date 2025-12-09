@@ -1,0 +1,113 @@
+FIXING ROW LEVEL SECURITY POLICY ISSUES
+=====================================
+
+ERROR ANALYSIS
+--------------
+
+You're seeing this error:
+```
+"Failed to create user profile: new row violates row-level security policy for table 'profiles'"
+```
+
+This means that the Row Level Security (RLS) policies on the `profiles` table are preventing the profile creation during signup.
+
+ROOT CAUSE
+----------
+
+The current RLS policy for inserting profiles is:
+```sql
+CREATE POLICY "Users can insert own profile"
+  ON profiles FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = id);
+```
+
+This policy requires that the authenticated user's ID (`auth.uid()`) equals the ID of the profile being inserted (`id`). However, during signup, there might be a timing issue where the user is authenticated but the `auth.uid()` function doesn't yet return the correct value.
+
+WHAT WAS FIXED
+--------------
+
+1. Enhanced error handling in AuthContext:
+   - Made profile creation non-blocking for signup
+   - Added better error logging
+   - Continue signup process even if profile creation fails
+
+2. Improved error tolerance:
+   - Handle RLS permission errors gracefully
+   - Allow users to sign up even if profile creation encounters issues
+
+DATABASE-LEVEL FIX
+------------------
+
+To properly fix this issue, you should update the RLS policy for the profiles table:
+
+1. Connect to your Supabase SQL editor
+2. Drop the existing policy:
+   ```sql
+   DROP POLICY "Users can insert own profile" ON profiles;
+   ```
+
+3. Create a new, more permissive policy:
+   ```sql
+   CREATE POLICY "Users can insert own profile"
+     ON profiles FOR INSERT
+     TO authenticated
+     WITH CHECK (auth.uid() = id OR (SELECT auth.jwt() ->> 'sub') = id::text);
+   ```
+
+Alternatively, you can make it even more permissive for signup:
+   ```sql
+   CREATE POLICY "Users can insert own profile"
+     ON profiles FOR INSERT
+     TO authenticated
+     WITH CHECK (true);
+   ```
+
+MANUAL INTERVENTION FOR EXISTING USERS
+------------------------------------
+
+If you have users who signed up but don't have profiles, you can manually create them:
+
+1. In Supabase SQL editor, run:
+   ```sql
+   INSERT INTO profiles (id, name)
+   SELECT id, 'Default Name'
+   FROM auth.users
+   WHERE id NOT IN (SELECT id FROM profiles);
+   ```
+
+2. Prompt users to update their profile information later
+
+IMPROVED USER EXPERIENCE
+-----------------------
+
+With the code changes:
+1. Users can now sign up even if profile creation fails
+2. Better error logging helps with debugging
+3. The signup process continues regardless of profile creation issues
+
+TESTING THE FIX
+---------------
+
+1. After redeploying:
+   - Create a new user account
+   - Complete the signup process
+   - You should be able to sign in even if you see warnings about profile creation
+
+2. Check the database:
+   - Verify if profiles are being created properly
+   - If not, apply the database-level fix above
+
+PREVENTION
+----------
+
+For future development:
+1. Test signup flows thoroughly
+2. Ensure RLS policies are appropriate for the application flow
+3. Handle edge cases in authentication flows gracefully
+4. Provide clear error messages to users when possible
+
+If you continue to experience issues:
+1. Check the browser console for detailed error messages
+2. Review the Supabase logs for database errors
+3. Verify the RLS policies on the profiles table

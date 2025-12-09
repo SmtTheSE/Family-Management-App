@@ -85,7 +85,7 @@ CREATE POLICY "Users can update own profile"
 CREATE POLICY "Users can insert own profile"
   ON profiles FOR INSERT
   TO authenticated
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK (auth.uid() = id OR (SELECT auth.jwt() ->> 'sub') = id::text);
 
 -- Create home_notes table
 CREATE TABLE IF NOT EXISTS home_notes (
