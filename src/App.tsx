@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Auth } from './components/Auth';
 import { Layout } from './components/Layout';
 import { LandingPage } from './components/LandingPage';
+import { Diagnostics } from './components/Diagnostics';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -28,7 +29,8 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="*" element={<AppContent />} />
+          <Route path="/" element={<AppContent />} />
+          <Route path="/diagnostics" element={<Diagnostics />} />
         </Routes>
       </AuthProvider>
     </Router>
