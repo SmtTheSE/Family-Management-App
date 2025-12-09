@@ -55,11 +55,9 @@ export function HomeNotes() {
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (!error && data) {
-      setNotes(data);
-      if (count) {
-        setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
-      }
+    setNotes(data);
+    if (count) {
+      setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
     }
     
     setLoading(false);
@@ -69,45 +67,54 @@ export function HomeNotes() {
     e.preventDefault();
     if (!user) return;
 
-    if (editingNote) {
-      const { error } = await supabase
-        .from('home_notes')
-        .update({
+    try {
+      if (editingNote) {
+        const { error } = await supabase
+          .from('home_notes')
+          .update({
+            title,
+            content,
+            category,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingNote.id);
+
+        if (error) throw error;
+        
+        loadNotes();
+        resetForm();
+      } else {
+        const { error } = await supabase.from('home_notes').insert({
+          user_id: user.id,
           title,
           content,
           category,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', editingNote.id);
+        });
 
-      if (!error) {
-        loadNotes();
-        resetForm();
-      }
-    } else {
-      const { error } = await supabase.from('home_notes').insert({
-        user_id: user.id,
-        title,
-        content,
-        category,
-      });
-
-      if (!error) {
+        if (error) throw error;
+        
         // Reset to first page to see the new note
         setCurrentPage(1);
         loadNotes();
         resetForm();
       }
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('မှတ်စုကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('ဤမှတ်စုကို ဖျက်မှာ သေချာပါသလား?')) {
+    if (!confirm('ဤမှတ်စုကို ဖျက်မှာ သေချာပါသလား?')) return;
+    
+    try {
       const { error } = await supabase.from('home_notes').delete().eq('id', id);
-
-      if (!error) {
-        loadNotes();
-      }
+      
+      if (error) throw error;
+      loadNotes();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('မှတ်စုကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 

@@ -65,9 +65,13 @@ export function Recipes() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
-      setRecipes(data);
+    if (error) {
+      console.error('Error loading recipes:', error);
+      alert('ချက်ပြုတ်နည်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်');
+      return;
     }
+    
+    setRecipes(data || []);
   };
 
   const filterRecipes = () => {
@@ -151,39 +155,48 @@ export function Recipes() {
     e.preventDefault();
     if (!user) return;
 
-    if (editingRecipe) {
-      const { error } = await supabase
-        .from('recipes')
-        .update({
+    try {
+      if (editingRecipe) {
+        const { error } = await supabase
+          .from('recipes')
+          .update({
+            ...formData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingRecipe.id);
+
+        if (error) throw error;
+        
+        loadRecipes();
+        resetForm();
+      } else {
+        const { error } = await supabase.from('recipes').insert({
           ...formData,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', editingRecipe.id);
+          user_id: user.id,
+        });
 
-      if (!error) {
+        if (error) throw error;
+        
         loadRecipes();
         resetForm();
       }
-    } else {
-      const { error } = await supabase.from('recipes').insert({
-        ...formData,
-        user_id: user.id,
-      });
-
-      if (!error) {
-        loadRecipes();
-        resetForm();
-      }
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+      alert('ချက်ပြုတ်နည်းကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('ဤချက်ပြုတ်နည်းကို ဖျက်မှာ သေချာပါသလား?')) {
+    if (!confirm('ဤချက်ပြုတ်နည်းကို ဖျက်မှာ သေချာပါသလား?')) return;
+    
+    try {
       const { error } = await supabase.from('recipes').delete().eq('id', id);
-
-      if (!error) {
-        loadRecipes();
-      }
+      
+      if (error) throw error;
+      loadRecipes();
+    } catch (error) {
+      console.error('Error deleting recipe:', error);
+      alert('ချက်ပြုတ်နည်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 

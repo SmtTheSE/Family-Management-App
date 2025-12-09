@@ -43,25 +43,33 @@ export function ShoppingLists() {
   }, [selectedList]);
 
   const loadLists = async () => {
-    const { data, error } = await supabase
-      .from('shopping_lists')
-      .select('*')
-      .order('week_date', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('shopping_lists')
+        .select('*')
+        .order('week_date', { ascending: false });
 
-    if (!error && data) {
-      setLists(data);
+      if (error) throw error;
+      setLists(data || []);
+    } catch (error) {
+      console.error('Error loading shopping lists:', error);
+      alert('စျေးဝယ်စာရင်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const loadItems = async (listId: string) => {
-    const { data, error } = await supabase
-      .from('shopping_items')
-      .select('*')
-      .eq('shopping_list_id', listId)
-      .order('created_at', { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from('shopping_items')
+        .select('*')
+        .eq('shopping_list_id', listId)
+        .order('created_at', { ascending: true });
 
-    if (!error && data) {
-      setItems(data);
+      if (error) throw error;
+      setItems(data || []);
+    } catch (error) {
+      console.error('Error loading shopping items:', error);
+      alert('စျေးဝယ်ပစ္စည်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
@@ -69,39 +77,49 @@ export function ShoppingLists() {
     e.preventDefault();
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('shopping_lists')
-      .insert({
-        user_id: user.id,
-        title: listTitle,
-        week_date: weekDate,
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('shopping_lists')
+        .insert({
+          user_id: user.id,
+          title: listTitle,
+          week_date: weekDate,
+        })
+        .select()
+        .single();
 
-    if (!error && data) {
+      if (error) throw error;
+      
       loadLists();
       setSelectedList(data);
       setShowListForm(false);
       setListTitle('');
       setWeekDate(new Date().toISOString().split('T')[0]);
+    } catch (error) {
+      console.error('Error creating shopping list:', error);
+      alert('စျေးဝယ်စာရင်းကို ဖန်တီးရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleDeleteList = async (id: string) => {
-    if (confirm('ဤစျေးဝယ်စာရင်းကို ဖျက်မှာ သေချာပါသလား?')) {
+    if (!confirm('ဤစျေးဝယ်စာရင်းကို ဖျက်မှာ သေချာပါသလား?')) return;
+    
+    try {
       const { error } = await supabase
         .from('shopping_lists')
         .delete()
         .eq('id', id);
 
-      if (!error) {
-        loadLists();
-        if (selectedList?.id === id) {
-          setSelectedList(null);
-          setItems([]);
-        }
+      if (error) throw error;
+      
+      loadLists();
+      if (selectedList?.id === id) {
+        setSelectedList(null);
+        setItems([]);
       }
+    } catch (error) {
+      console.error('Error deleting shopping list:', error);
+      alert('စျေးဝယ်စာရင်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
@@ -109,52 +127,70 @@ export function ShoppingLists() {
     e.preventDefault();
     if (!selectedList) return;
 
-    const { error } = await supabase.from('shopping_items').insert({
-      shopping_list_id: selectedList.id,
-      item_name: newItemName,
-      quantity: newItemQuantity,
-    });
+    try {
+      const { error } = await supabase.from('shopping_items').insert({
+        shopping_list_id: selectedList.id,
+        item_name: newItemName,
+        quantity: newItemQuantity,
+      });
 
-    if (!error) {
+      if (error) throw error;
+      
       loadItems(selectedList.id);
       setNewItemName('');
       setNewItemQuantity('1');
+    } catch (error) {
+      console.error('Error adding shopping item:', error);
+      alert('စျေးဝယ်ပစ္စည်းကို ထည့်ရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleToggleItem = async (item: ShoppingItem) => {
-    const { error } = await supabase
-      .from('shopping_items')
-      .update({ is_checked: !item.is_checked })
-      .eq('id', item.id);
+    try {
+      const { error } = await supabase
+        .from('shopping_items')
+        .update({ is_checked: !item.is_checked })
+        .eq('id', item.id);
 
-    if (!error) {
+      if (error) throw error;
       loadItems(selectedList!.id);
+    } catch (error) {
+      console.error('Error toggling shopping item:', error);
+      alert('စျေးဝယ်ပစ္စည်းအခြေအနေကို ပြောင်းလဲရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleDeleteItem = async (id: string) => {
-    const { error } = await supabase
-      .from('shopping_items')
-      .delete()
-      .eq('id', id);
+    try {
+      const { error } = await supabase
+        .from('shopping_items')
+        .delete()
+        .eq('id', id);
 
-    if (!error) {
+      if (error) throw error;
       loadItems(selectedList!.id);
+    } catch (error) {
+      console.error('Error deleting shopping item:', error);
+      alert('စျေးဝယ်ပစ္စည်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
   const handleToggleListCompletion = async (list: ShoppingList) => {
-    const { error } = await supabase
-      .from('shopping_lists')
-      .update({ is_completed: !list.is_completed })
-      .eq('id', list.id);
+    try {
+      const { error } = await supabase
+        .from('shopping_lists')
+        .update({ is_completed: !list.is_completed })
+        .eq('id', list.id);
 
-    if (!error) {
+      if (error) throw error;
+      
       loadLists();
       if (selectedList?.id === list.id) {
         setSelectedList({ ...list, is_completed: !list.is_completed });
       }
+    } catch (error) {
+      console.error('Error toggling list completion:', error);
+      alert('စာရင်းအခြေအနေကို ပြောင်းလဲရာတွင် အမှားဖြစ်ခဲ့သည်');
     }
   };
 
