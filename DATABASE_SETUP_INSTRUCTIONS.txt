@@ -1,0 +1,73 @@
+DATABASE SETUP INSTRUCTIONS
+==========================
+
+This document explains how to set up the database for your Family Management Application.
+
+FILES INCLUDED:
+--------------
+
+1. FULL_DATABASE_SCHEMA.sql - Complete SQL schema that can be executed directly in Supabase SQL editor
+2. supabase/migrations/20251209070000_full_database_schema.sql - Migration file for Supabase CLI
+
+DATABASE STRUCTURE:
+------------------
+
+The database includes the following tables:
+
+1. profiles - User profile information
+2. home_notes - Home management notes with categories
+3. recipes - Cooking recipes with ingredients and instructions
+4. shopping_lists - Shopping lists for different weeks/purposes
+5. shopping_items - Individual items within shopping lists
+6. expenses - Expense tracking with categories and dates
+7. chat_history - AI assistant chat history
+
+ROW LEVEL SECURITY (RLS):
+-----------------------
+
+All tables have RLS enabled with appropriate policies:
+- Users can only access their own data
+- Recipes are publicly viewable but only editable by their owners
+- Proper cascading deletes to maintain data integrity
+
+STORAGE:
+-------
+
+- Recipe images are stored in the "recipe-images" bucket
+- Public read access with authenticated write access
+
+SETUP OPTIONS:
+-------------
+
+Option 1: Direct SQL Execution (Easiest)
+1. Open your Supabase project dashboard
+2. Go to SQL Editor
+3. Copy and paste the contents of FULL_DATABASE_SCHEMA.sql
+4. Run the query
+
+Option 2: Using Supabase CLI (Recommended for development)
+1. Make sure you have Supabase CLI installed
+2. Link your project: supabase link --project-ref YOUR_PROJECT_ID
+3. Apply migrations: supabase db push
+
+AFTER SETUP:
+-----------
+
+1. The database will automatically enforce RLS policies
+2. New users will be able to register and their profiles will be created automatically
+3. All CRUD operations in your application should work correctly
+4. Storage bucket for recipe images is ready to use
+
+TROUBLESHOOTING:
+---------------
+
+If you encounter any issues:
+
+1. Make sure RLS is enabled on all tables
+2. Check that the policies are correctly applied
+3. Verify that the storage bucket exists
+4. Ensure your application has the correct Supabase URL and anon key
+
+For any 401 errors, make sure your environment variables are correctly set:
+- VITE_SUPABASE_URL
+- VITE_SUPABASE_ANON_KEY
