@@ -1,0 +1,6 @@
+{
+  "name": "chat-with-openai",
+  "permissions": {
+    "authenticated": ["invoke"]
+  }
+}

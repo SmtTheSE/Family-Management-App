@@ -1,0 +1,43 @@
+STEP-BY-STEP GUIDE TO DEPLOY YOUR SUPABASE EDGE FUNCTION
+
+1. FIND YOUR SUPABASE PROJECT ID:
+   a. Go to https://app.supabase.com/
+   b. Sign in to your account
+   c. Select your project from the dashboard
+   d. Look at the URL in your browser's address bar
+   e. The URL will look like: https://app.supabase.com/project/abcdefghijklmnopqrstuvwxyz
+   f. Your Project ID is the random string after "/project/" (e.g., "abcdefghijklmnopqrstuvwxyz")
+
+2. NAVIGATE TO YOUR PROJECT DIRECTORY:
+   Open Terminal and run:
+   cd /Users/sittminthar/Downloads/project
+
+3. DEPLOY THE FUNCTION:
+   In Terminal, run:
+   supabase functions deploy chat-with-openai --project-ref YOUR_PROJECT_ID
+   
+   Replace YOUR_PROJECT_ID with the actual ID you found in step 1.f
+
+4. VERIFY THE FUNCTION IS DEPLOYED:
+   a. Go back to the Supabase Dashboard
+   b. In the left sidebar, click on "Functions"
+   c. You should see "chat-with-openai" in the list of functions
+
+5. TEST THE FUNCTION:
+   Run the test script:
+   node test-function-locally.js
+
+   Or use curl:
+   curl -X POST \
+     https://YOUR_SUPABASE_URL.supabase.co/functions/v1/chat-with-openai \
+     -H "Authorization: Bearer YOUR_SUPABASE_ANON_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"message":"Hello! မင်္ဂလာပါ။ သင်ဘယ်လိုအကူအညီပေးနိုင်ပါသလဲ?"}'
+
+TROUBLESHOOTING:
+- If you get permission errors, make sure you're logged in to the Supabase CLI:
+  supabase login
+  
+- If the function doesn't appear in the dashboard, check that the deployment succeeded
+
+- If you get "Function not found" errors, make sure you used the correct project ID

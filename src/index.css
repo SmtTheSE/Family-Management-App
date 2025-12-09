@@ -1,0 +1,320 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-gray-900 bg-gradient-to-br from-gray-50 to-white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Apple-inspired color palette */
+  .bg-primary {
+    @apply bg-white;
+  }
+  
+  .bg-secondary {
+    @apply bg-gray-50;
+  }
+  
+  .bg-tertiary {
+    @apply bg-gray-100;
+  }
+  
+  .text-primary {
+    @apply text-gray-900;
+  }
+  
+  .text-secondary {
+    @apply text-gray-600;
+  }
+  
+  .text-tertiary {
+    @apply text-gray-400;
+  }
+  
+  /* Myanmar text rendering fix */
+  .myanmar-text {
+    @apply py-1 leading-none;
+  }
+}
+
+@layer components {
+  /* Enhanced Apple-inspired card design with modern aesthetics */
+  .apple-card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100/80 hover:shadow-md transition-all duration-300 ease-apple overflow-hidden backdrop-blur-sm;
+  }
+  
+  .apple-card-glass {
+    @apply bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-glass hover:shadow-lg transition-all duration-300 ease-apple;
+  }
+  
+  /* Enhanced Apple-inspired buttons with better mobile touch targets */
+  .btn-primary {
+    @apply bg-gradient-to-r from-gray-800 to-gray-900 hover:from-black hover:to-black text-white font-medium rounded-xl px-5 py-3 transition-all duration-200 ease-apple focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-20 shadow-sm hover:shadow md:px-5 md:py-2.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-700 font-medium rounded-xl px-5 py-3 transition-all duration-200 ease-apple focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-20 shadow-sm hover:shadow border border-gray-200 md:px-5 md:py-2.5;
+  }
+  
+  .btn-icon {
+    @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ease-apple focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-20;
+  }
+  
+  /* Enhanced Apple-inspired inputs with better mobile touch targets */
+  .input-apple {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 ease-apple shadow-sm text-base;
+    /* Better mobile touch targets and readability */
+    min-height: 44px;
+  }
+  
+  .input-apple:focus {
+    @apply border-transparent ring-2 ring-gray-100;
+  }
+  
+  /* Enhanced Apple-inspired selects with better mobile touch targets */
+  .select-apple {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 ease-apple shadow-sm text-base appearance-none;
+    /* Better mobile touch targets and readability */
+    min-height: 44px;
+  }
+  
+  .select-apple:focus {
+    @apply border-transparent ring-2 ring-gray-100;
+  }
+  
+  /* Custom dropdown arrow for modern look */
+  .select-apple-wrapper {
+    @apply relative;
+  }
+  
+  .select-apple-wrapper::after {
+    content: "▼";
+    @apply absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none text-xs;
+  }
+  
+  /* Enhanced textarea with better mobile usability */
+  .textarea-apple {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 ease-apple shadow-sm text-base;
+    /* Better mobile touch targets and readability */
+    min-height: 44px;
+  }
+  
+  .textarea-apple:focus {
+    @apply border-transparent ring-2 ring-gray-100;
+  }
+  
+  /* Enhanced navigation with modern tabular style */
+  .nav-link {
+    @apply flex items-center justify-center px-4 py-3 rounded-xl transition-all duration-200 ease-apple text-center md:px-5 md:py-3;
+    /* Better mobile touch targets */
+    min-height: 44px;
+  }
+  
+  .nav-link-active {
+    @apply nav-link bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-sm;
+  }
+  
+  .nav-link-inactive {
+    @apply nav-link text-gray-600 hover:bg-gray-100;
+  }
+  
+  /* Typography hierarchy with Apple-inspired weights and sizes */
+  .heading-hero {
+    @apply text-3xl font-bold text-gray-900 md:text-4xl lg:text-5xl;
+  }
+  
+  .heading-section {
+    @apply text-2xl font-bold text-gray-900 md:text-3xl;
+  }
+  
+  .heading-card {
+    @apply text-xl font-semibold text-gray-900 md:text-2xl;
+  }
+  
+  .body-text {
+    @apply text-base text-gray-700 md:text-lg;
+  }
+  
+  .caption-text {
+    @apply text-sm text-gray-600 md:text-base;
+  }
+  
+  /* Apple-inspired animations */
+  .ease-apple {
+    transition-timing-function: cubic-bezier(0.455, 0.030, 0.515, 0.955);
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+  
+  .hover-lift {
+    @apply transition-transform duration-300 ease-apple;
+  }
+  
+  .hover-lift:hover {
+    @apply transform translate-y-[-4px];
+  }
+  
+  /* Blob animations */
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Glass effect shadows */
+  .shadow-glass {
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  
+  /* Responsive improvements for better mobile experience */
+  @media (max-width: 768px) {
+    .apple-card-glass > div {
+      @apply p-4;
+    }
+    
+    /* Header specific improvements */
+    .header-title {
+      @apply text-base;
+    }
+    
+    /* Better mobile navigation */
+    .mobile-nav-button {
+      @apply px-3 py-2 text-sm;
+    }
+    
+    /* Card improvements for mobile */
+    .apple-card {
+      @apply transition-all duration-200 mb-4;
+    }
+    
+    /* Adjust blob sizes for mobile */
+    .animate-blob {
+      width: 16rem;
+      height: 16rem;
+    }
+    
+    /* Expense tracker specific mobile improvements */
+    .expense-actions {
+      @apply flex-row justify-end;
+    }
+  }
+  
+  /* Extra small device optimizations */
+  @media (max-width: 480px) {
+    .input-apple,
+    .select-apple,
+    .textarea-apple {
+      @apply py-4 text-base;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+      @apply py-4 text-base;
+    }
+    
+    .heading-hero {
+      @apply text-2xl;
+    }
+    
+    .heading-section {
+      @apply text-xl;
+    }
+    
+    /* Better spacing for very small screens */
+    .space-y-4 {
+      @apply space-y-5;
+    }
+    
+    .space-y-6 {
+      @apply space-y-7;
+    }
+    
+    /* Header specific improvements for small screens */
+    .header-title {
+      @apply text-sm;
+    }
+    
+    .logo-sm {
+      @apply w-7 h-7;
+    }
+    
+    /* Better card spacing on small screens */
+    .apple-card {
+      @apply mb-4;
+    }
+    
+    /* Adjust blob sizes for extra small screens */
+    .animate-blob {
+      width: 12rem;
+      height: 12rem;
+    }
+    
+    /* Expense tracker specific extra small device improvements */
+    .expense-actions {
+      @apply flex-row space-x-2;
+    }
+  }
+  
+  /* Small landscape mode optimizations */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .landscape-padding {
+      @apply py-2;
+    }
+    
+    .landscape-button {
+      @apply px-3 py-2 text-sm;
+    }
+  }
+}
