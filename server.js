@@ -13,7 +13,13 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Serve static files from the dist directory
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist'), {
+  setHeaders: function(res, path) {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
 
 // Handle all routes by serving index.html (for client-side routing)
 app.get('*', (req, res) => {

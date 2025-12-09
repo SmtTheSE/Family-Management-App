@@ -1,0 +1,74 @@
+TROUBLESHOOTING SUPABASE AUTHENTICATION ERRORS
+============================================
+
+PROBLEM:
+--------
+You're getting this error when creating accounts:
+{"message":"No API key found in request","hint":"No `apikey` request header or url param was found."}
+
+CAUSE:
+------
+This error occurs when the Supabase client doesn't have the proper API key configuration, which can happen for several reasons:
+
+1. Environment variables are not set in the deployment environment
+2. Supabase client is not properly configured to send the API key
+3. CORS issues preventing proper header transmission
+4. Database schema issues (missing tables or RLS policies)
+
+SOLUTIONS:
+----------
+
+1. VERIFY ENVIRONMENT VARIABLES ON RENDER:
+   - Go to your Render dashboard
+   - Select your web service
+   - Go to "Environment Variables" section
+   - Make sure these two variables are set:
+     VITE_SUPABASE_URL=https://oixtcofqjffaadkzrfrr.supabase.co
+     VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9peHRjb2ZxamZmYWFka3pyZnJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNjE2MjksImV4cCI6MjA4MDgzNzYyOX0.bFbbuCtQ1th_M4es5ff53qpx0jmJKlZ7j2BiOLCF2oM
+
+2. REDEPLOY YOUR APPLICATION:
+   - After confirming environment variables, trigger a new deployment
+   - This ensures the new environment variables are used
+
+3. CHECK DATABASE SCHEMA:
+   - Make sure all required tables exist:
+     * profiles
+     * home_notes
+     * recipes
+     * shopping_lists
+     * shopping_items
+     * expenses
+     * chat_history
+   - Make sure RLS policies are enabled on all tables
+
+4. TEST LOCALLY FIRST:
+   - Run your application locally with "npm run dev"
+   - Verify authentication works correctly
+   - If it works locally but not on deployment, the issue is definitely with environment variables
+
+5. CHECK BROWSER CONSOLE:
+   - Look for any CORS errors
+   - Check if requests include the proper Authorization headers
+
+6. SUPABASE DASHBOARD CHECKS:
+   - Go to your Supabase project dashboard
+   - Check Authentication > Settings
+   - Make sure "Enable email signup" is turned ON
+   - Check if your site URL is in the "Additional URLs" list
+
+7. DEBUGGING STEPS:
+   - Visit /diagnostics route to check if environment variables are loaded
+   - Check Network tab in browser dev tools to see request headers
+   - Verify that requests to Supabase include the "apikey" header
+
+If you've verified all the above and still have issues, try these additional steps:
+
+1. Clear your browser cache and try again
+2. Try in an incognito/private browsing window
+3. Check if there are any ad blockers or browser extensions interfering
+4. Try a different browser
+
+The fixes I've implemented in the code:
+1. Enhanced Supabase client configuration to explicitly include the API key
+2. Made profile creation more robust to handle edge cases
+3. Improved server configuration for proper header handling

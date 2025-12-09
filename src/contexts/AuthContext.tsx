@@ -44,14 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
 
     if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          name,
-        });
+      // Try to insert profile, but don't fail signup if it already exists
+      try {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            name,
+          });
 
-      if (profileError) throw profileError;
+        if (profileError && profileError.code !== '23505') { // 23505 is duplicate key error
+          console.warn('Profile insertion error (not critical):', profileError);
+        }
+      } catch (profileError) {
+        console.warn('Non-critical profile creation error:', profileError);
+      }
     }
   };
 

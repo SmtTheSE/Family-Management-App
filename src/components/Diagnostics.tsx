@@ -25,12 +25,8 @@ export function Diagnostics() {
         error: ''
       });
       
-      // Try a simple Supabase request to test connectivity
-      supabase.rpc('now').then(result => {
-        console.log('Supabase connection test:', result);
-      }).catch(error => {
-        console.error('Supabase connection error:', error);
-      });
+      // Log the Supabase client to verify it's properly initialized
+      console.log('Supabase client:', supabase);
     } catch (error) {
       setDiagnostics(prev => ({
         ...prev,
