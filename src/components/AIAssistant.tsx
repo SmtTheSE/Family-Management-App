@@ -266,3 +266,173 @@ export function AIAssistant() {
     </div>
   );
 }
+
+import { useState } from 'react';
+import { BarChart, PieChart, Download, Bell, Filter, Eye } from 'lucide-react';
+
+export function FamilyFinanceDashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // Mock data for demonstration
+  const budgetCategories = [
+    { id: 1, name: 'Food', allocated: 200000, spent: 150000, color: 'bg-blue-500' },
+    { id: 2, name: 'Transport', allocated: 100000, spent: 80000, color: 'bg-green-500' },
+    { id: 3, name: 'School Fees', allocated: 500000, spent: 500000, color: 'bg-purple-500' },
+    { id: 4, name: 'Healthcare', allocated: 150000, spent: 75000, color: 'bg-red-500' },
+    { id: 5, name: 'Entertainment', allocated: 100000, spent: 50000, color: 'bg-yellow-500' },
+  ];
+  
+  const recentTransactions = [
+    { id: 1, description: 'Grocery Shopping', amount: -45000, date: '2025-12-08', category: 'Food' },
+    { id: 2, description: 'School Fee Payment', amount: -500000, date: '2025-12-05', category: 'School Fees' },
+    { id: 3, description: 'Salary Deposit', amount: 800000, date: '2025-12-01', category: 'Income' },
+    { id: 4, description: 'Bus Fare', amount: -3000, date: '2025-12-07', category: 'Transport' },
+    { id: 5, description: 'Doctor Visit', amount: -25000, date: '2025-12-06', category: 'Healthcare' },
+  ];
+  
+  const upcomingPayments = [
+    { id: 1, description: 'Electricity Bill', amount: 75000, dueDate: '2025-12-15' },
+    { id: 2, description: 'Internet Subscription', amount: 35000, dueDate: '2025-12-20' },
+    { id: 3, description: 'Insurance Premium', amount: 120000, dueDate: '2025-12-25' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 className="heading-hero text-primary">Family Finance Dashboard</h2>
+        <div className="flex space-x-2">
+          <button className="btn-secondary flex items-center space-x-2">
+            <Filter size={18} />
+            <span>Filter</span>
+          </button>
+          <button className="btn-primary flex items-center space-x-2">
+            <Download size={18} />
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="apple-card p-6">
+          <h3 className="text-gray-500 text-sm font-medium mb-1">Total Balance</h3>
+          <p className="text-2xl font-bold">1,250,000 MMK</p>
+        </div>
+        <div className="apple-card p-6">
+          <h3 className="text-gray-500 text-sm font-medium mb-1">Monthly Income</h3>
+          <p className="text-2xl font-bold">800,000 MMK</p>
+        </div>
+        <div className="apple-card p-6">
+          <h3 className="text-gray-500 text-sm font-medium mb-1">Monthly Expenses</h3>
+          <p className="text-2xl font-bold">855,000 MMK</p>
+        </div>
+        <div className="apple-card p-6">
+          <h3 className="text-gray-500 text-sm font-medium mb-1">Savings Rate</h3>
+          <p className="text-2xl font-bold">-6.9%</p>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Spending by Category */}
+        <div className="apple-card p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="heading-section">Spending by Category</h3>
+            <button className="btn-icon">
+              <Eye size={18} />
+            </button>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <PieChart className="text-gray-300" size={80} />
+            <div className="absolute text-center">
+              <p className="text-2xl font-bold">855,000</p>
+              <p className="text-gray-500">MMK</p>
+            </div>
+          </div>
+          <div className="mt-6 space-y-3">
+            {budgetCategories.map((category) => (
+              <div key={category.id} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className={`w-3 h-3 ${category.color} rounded-full mr-3`}></div>
+                  <span>{category.name}</span>
+                </div>
+                <span>{category.spent.toLocaleString()} MMK</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Monthly Trend */}
+        <div className="apple-card p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="heading-section">Monthly Trend</h3>
+            <button className="btn-icon">
+              <Eye size={18} />
+            </button>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <BarChart className="text-gray-300" size={80} />
+          </div>
+          <div className="mt-6">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Jan</span>
+              <span>Feb</span>
+              <span>Mar</span>
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Transactions and Upcoming Payments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Transactions */}
+        <div className="apple-card">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="heading-section">Recent Transactions</h3>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {recentTransactions.map((transaction) => (
+              <div key={transaction.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex justify-between">
+                  <div>
+                    <p className="font-medium">{transaction.description}</p>
+                    <p className="text-sm text-gray-500">{transaction.date} • {transaction.category}</p>
+                  </div>
+                  <p className={`font-medium ${transaction.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    {transaction.amount < 0 ? '-' : '+'}{Math.abs(transaction.amount).toLocaleString()} MMK
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Upcoming Payments */}
+        <div className="apple-card">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex justify-between items-center">
+              <h3 className="heading-section">Upcoming Payments</h3>
+              <Bell className="text-blue-500" size={20} />
+            </div>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {upcomingPayments.map((payment) => (
+              <div key={payment.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex justify-between">
+                  <div>
+                    <p className="font-medium">{payment.description}</p>
+                    <p className="text-sm text-gray-500">Due: {payment.dueDate}</p>
+                  </div>
+                  <p className="font-medium text-red-600">{payment.amount.toLocaleString()} MMK</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

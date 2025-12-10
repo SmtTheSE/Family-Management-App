@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, ChefHat, ShoppingCart, MessageSquare, LogOut, Menu, X, Wallet } from 'lucide-react';
+import { Home, ChefHat, ShoppingCart, LogOut, Menu, X, Wallet, FileText } from 'lucide-react';
 import { HomeNotes } from './HomeNotes';
 import { Recipes } from './Recipes';
 import { ShoppingLists } from './ShoppingLists';
-import { AIAssistant } from './AIAssistant';
 import { ExpenseTracker } from './ExpenseTracker';
+import { NotesAndContacts } from './NotesAndContacts';
 import { Logo } from './Logo';
 import { Footer } from './Footer';
 
-type TabType = 'home' | 'recipes' | 'shopping' | 'assistant' | 'expenses';
+type TabType = 'home' | 'recipes' | 'shopping' | 'expenses' | 'notes-contacts';
 
 export function Layout() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -22,7 +22,7 @@ export function Layout() {
     { id: 'recipes' as TabType, label: 'ချက်ပြုတ်နည်းများ', icon: ChefHat },
     { id: 'shopping' as TabType, label: 'စျေးဝယ်စာရင်း', icon: ShoppingCart },
     { id: 'expenses' as TabType, label: 'စာရင်းကုန်ကျမှုများ', icon: Wallet },
-    { id: 'assistant' as TabType, label: 'AI အကူအညီ', icon: MessageSquare },
+    { id: 'notes-contacts' as TabType, label: 'မှတ်စု & ဆက်သွယ်ရန်', icon: FileText },
   ];
 
   const renderContent = () => {
@@ -35,8 +35,8 @@ export function Layout() {
         return <ShoppingLists />;
       case 'expenses':
         return <ExpenseTracker />;
-      case 'assistant':
-        return <AIAssistant />;
+      case 'notes-contacts':
+        return <NotesAndContacts />;
       default:
         return <HomeNotes />;
     }
