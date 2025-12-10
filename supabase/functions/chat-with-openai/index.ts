@@ -3,43 +3,71 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import OpenAI from "https://deno.land/x/openai@v4.29.0/mod.ts";
 
 serve(async (_req) => {
-  // Get the authorization header
-  const authHeader = _req.headers.get("Authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return new Response(
-      JSON.stringify({ error: "Missing or invalid Authorization header" }),
-      {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
+  // Handle CORS preflight request
+  if (_req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*', // In production, replace with your frontend domain
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+        'Access-Control-Max-Age': '86400',
       },
-    );
+    });
   }
 
-  // Get the API key from Supabase secrets (not from client)
-  const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!openaiApiKey) {
-    return new Response(
-      JSON.stringify({ error: "OpenAI API key not configured on server" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
-
-  // Parse the request body
-  const { message } = await _req.json();
-  if (!message) {
-    return new Response(
-      JSON.stringify({ error: "Message is required" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
+  // Set CORS headers for the main response
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*', // In production, replace with your frontend domain
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+  };
 
   try {
+    // Get the authorization header
+    const authHeader = _req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing or invalid Authorization header" }),
+        {
+          status: 401,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          },
+        },
+      );
+    }
+
+    // Get the API key from Supabase secrets (not from client)
+    const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
+    if (!openaiApiKey) {
+      return new Response(
+        JSON.stringify({ error: "OpenAI API key not configured on server" }),
+        {
+          status: 500,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          },
+        },
+      );
+    }
+
+    // Parse the request body
+    const { message } = await _req.json();
+    if (!message) {
+      return new Response(
+        JSON.stringify({ error: "Message is required" }),
+        {
+          status: 400,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          },
+        },
+      );
+    }
+
     const openai = new OpenAI({
       apiKey: openaiApiKey,
     });
@@ -60,7 +88,10 @@ serve(async (_req) => {
     return new Response(
       JSON.stringify({ response }),
       {
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...corsHeaders
+        },
       },
     );
   } catch (error) {
@@ -69,7 +100,10 @@ serve(async (_req) => {
       JSON.stringify({ error: "Error processing your request" }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...corsHeaders
+        },
       },
     );
   }
