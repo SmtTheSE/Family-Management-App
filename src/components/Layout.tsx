@@ -52,7 +52,7 @@ export function Layout() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
       {/* Enhanced Apple-inspired navigation bar with modern tabular style */}
       <nav className="bg-white/80 border-b border-gray-200/50 sticky top-0 z-50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Logo size="sm" className="logo-sm" />
@@ -173,7 +173,8 @@ export function Layout() {
         </div>
       </nav>
 
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+      {/* Main content with improved responsive layout */}
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 w-full">
         <div className="slide-up">
           {renderContent()}
         </div>

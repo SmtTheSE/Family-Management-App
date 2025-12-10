@@ -317,4 +317,51 @@
       @apply px-3 py-2 text-sm;
     }
   }
+  
+  /* Large screen optimizations */
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 100%;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+    
+    .container.max-w-screen-xl {
+      max-width: 1280px;
+    }
+    
+    .container.max-w-screen-2xl {
+      max-width: 1536px;
+    }
+  }
+  
+  /* Ultra-wide screen optimizations */
+  @media (min-width: 1536px) {
+    .container {
+      max-width: 100%;
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+    
+    .container.max-w-screen-xl {
+      max-width: 1280px;
+    }
+    
+    .container.max-w-screen-2xl {
+      max-width: 1536px;
+    }
+  }
+}
+
+/* Container classes for different layouts */
+.container-fluid {
+  @apply w-full px-4 sm:px-6 lg:px-8;
+}
+
+.container-narrow {
+  @apply max-w-4xl mx-auto;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto;
 }
