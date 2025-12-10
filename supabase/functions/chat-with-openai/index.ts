@@ -54,7 +54,23 @@ serve(async (_req) => {
     }
 
     // Parse the request body
-    const { message } = await _req.json();
+    let requestData;
+    try {
+      requestData = await _req.json();
+    } catch (parseError) {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        {
+          status: 400,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          },
+        },
+      );
+    }
+
+    const { message } = requestData;
     if (!message) {
       return new Response(
         JSON.stringify({ error: "Message is required" }),
@@ -97,7 +113,10 @@ serve(async (_req) => {
   } catch (error) {
     console.error("OpenAI API error:", error);
     return new Response(
-      JSON.stringify({ error: "Error processing your request" }),
+      JSON.stringify({ 
+        error: "Error processing your request",
+        message: error.message || "Unknown error"
+      }),
       {
         status: 500,
         headers: { 
