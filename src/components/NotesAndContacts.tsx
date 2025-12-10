@@ -29,7 +29,8 @@ export function NotesAndContacts() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [notesSearchTerm, setNotesSearchTerm] = useState('');
+  const [contactsSearchTerm, setContactsSearchTerm] = useState('');
   
   // Form states
   const [showNoteForm, setShowNoteForm] = useState(false);
@@ -275,17 +276,19 @@ export function NotesAndContacts() {
 
   // Filter notes based on search term
   const filteredNotes = notes.filter(note => 
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    note.title.toLowerCase().includes(notesSearchTerm.toLowerCase()) ||
+    note.content.toLowerCase().includes(notesSearchTerm.toLowerCase()) ||
+    note.category.toLowerCase().includes(notesSearchTerm.toLowerCase()) ||
+    note.tags.some(tag => tag.toLowerCase().includes(notesSearchTerm.toLowerCase()))
   );
 
   // Filter contacts based on search term
   const filteredContacts = contacts.filter(contact => 
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.category.toLowerCase().includes(searchTerm.toLowerCase())
+    contact.name.toLowerCase().includes(contactsSearchTerm.toLowerCase()) ||
+    contact.role.toLowerCase().includes(contactsSearchTerm.toLowerCase()) ||
+    contact.category.toLowerCase().includes(contactsSearchTerm.toLowerCase()) ||
+    (contact.phone && contact.phone.toLowerCase().includes(contactsSearchTerm.toLowerCase())) ||
+    (contact.email && contact.email.toLowerCase().includes(contactsSearchTerm.toLowerCase()))
   );
 
   // Categories for notes and contacts
@@ -538,8 +541,8 @@ export function NotesAndContacts() {
                     <input 
                       type="text" 
                       placeholder="မှတ်စုများတွင် ရှာဖွေရန်..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={notesSearchTerm}
+                      onChange={(e) => setNotesSearchTerm(e.target.value)}
                       className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -619,8 +622,8 @@ export function NotesAndContacts() {
                     <input 
                       type="text" 
                       placeholder="ဆက်သွယ်ရန်များတွင် ရှာဖွေရန်..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={contactsSearchTerm}
+                      onChange={(e) => setContactsSearchTerm(e.target.value)}
                       className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
