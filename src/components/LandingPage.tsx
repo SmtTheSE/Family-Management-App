@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Logo } from './Logo';
 import { useAuth } from '../contexts/AuthContext';
 import { Wallet, Home, ChefHat, ShoppingCart, FileText, Users, LogIn, UserPlus } from 'lucide-react';
@@ -115,24 +116,89 @@ export function LandingPage() {
       <div className="relative overflow-visible pt-16">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-1/2 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute top-0 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 md:w-96 md:h-96 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+          <motion.div 
+            animate={{ 
+              x: [0, 50, 0, -50, 0],
+              y: [0, -30, 0, 30, 0],
+              scale: [1, 1.1, 1, 1.05, 1]
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute -top-1/2 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          ></motion.div>
+          <motion.div 
+            animate={{ 
+              x: [0, -40, 0, 40, 0],
+              y: [0, 20, 0, -20, 0],
+              scale: [1, 1.05, 1, 1.1, 1]
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+            className="absolute top-0 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          ></motion.div>
+          <motion.div 
+            animate={{ 
+              x: [0, 30, 0, -30, 0],
+              y: [0, -40, 0, 40, 0],
+              scale: [1, 1.1, 1, 1.05, 1]
+            }}
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 4
+            }}
+            className="absolute top-1/2 left-1/2 w-64 h-64 md:w-96 md:h-96 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          ></motion.div>
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <div className="pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
-              <main className="mt-10 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28">
+              <motion.main 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mt-10 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28"
+              >
                 <div className="text-center lg:text-left">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-gray-900">
+                  <motion.h1 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-gray-900"
+                  >
                     <span className="block">Manage Your Family</span>
-                    <span className="block text-gray-800 mt-2">Like Never Before</span>
-                  </h1>
-                  <p className="mt-3 text-base sm:text-lg md:text-xl lg:text-xl text-gray-500 sm:mt-5 md:mt-5">
+                    <motion.span 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="block text-gray-800 mt-2"
+                    >
+                      Like Never Before
+                    </motion.span>
+                  </motion.h1>
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="mt-3 text-base sm:text-lg md:text-xl lg:text-xl text-gray-500 sm:mt-5 md:mt-5"
+                  >
                     The ultimate family management solution. Organize your home, recipes, shopping lists, expenses, notes & contacts - all in one beautifully designed app.
-                  </p>
-                  <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-3">
+                  </motion.p>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="mt-5 sm:mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-3"
+                  >
                     <div className="rounded-md shadow">
                       <a
                         href="#features"
@@ -149,17 +215,35 @@ export function LandingPage() {
                         Live Demo
                       </a>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
-              </main>
+              </motion.main>
             </div>
-            <div className="flex justify-center lg:justify-end">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ 
+                duration: 0.7,
+                delay: 0.5,
+                type: "spring",
+                stiffness: 100
+              }}
+              whileHover={{ 
+                scale: 1.03,
+                rotate: 2,
+                transition: { duration: 0.3 }
+              }}
+              whileTap={{ scale: 0.98 }}
+              drag
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              className="flex justify-center lg:justify-end"
+            >
               <img 
                 src="/images/family-high-quality.jpg" 
                 alt="Family Management" 
                 className="rounded-2xl shadow-2xl w-full max-w-lg object-cover h-auto"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -182,7 +266,15 @@ export function LandingPage() {
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <div key={index} className="relative group">
+                  <motion.div 
+                    key={index} 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -10 }}
+                    className="relative group"
+                  >
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-gray-900 text-white group-hover:bg-black transition-colors duration-300">
                       <Icon className="h-6 w-6" />
                     </div>
@@ -192,7 +284,7 @@ export function LandingPage() {
                         {feature.description}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -219,7 +311,14 @@ export function LandingPage() {
               </div>
               
               <div className="space-y-4">
-                <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  whileHover={{ x: 10 }}
+                  className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors"
+                >
                   <div className="flex justify-between">
                     <h4 className="font-medium">ဆေးညွှန်း မှတ်စု</h4>
                     <span className="text-xs text-gray-500">2 နာရီအကြာ</span>
@@ -229,9 +328,16 @@ export function LandingPage() {
                     <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">ကျန်းမာရေး</span>
                     <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">အရေးကြီး</span>
                   </div>
-                </div>
+                </motion.div>
                 
-                <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  whileHover={{ x: 10 }}
+                  className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors"
+                >
                   <div className="flex justify-between">
                     <h4 className="font-medium">စျေးဝယ်စာရင်း</h4>
                     <span className="text-xs text-gray-500">မနေ့က</span>
@@ -244,7 +350,7 @@ export function LandingPage() {
                   <div className="flex flex-wrap gap-2 mt-3">
                     <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">စျေးဝယ်</span>
                   </div>
-                </div>
+                </motion.div>
               </div>
               
               <div className="mt-6">
@@ -262,7 +368,14 @@ export function LandingPage() {
               </div>
               
               <div className="space-y-4">
-                <div className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  whileHover={{ x: 10 }}
+                  className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors"
+                >
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
                     <Users className="text-blue-600 h-5 w-5" />
                   </div>
@@ -274,9 +387,16 @@ export function LandingPage() {
                   <button className="px-3 py-1 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple text-sm font-medium">
                     ခေါ်မည်
                   </button>
-                </div>
+                </motion.div>
                 
-                <div className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  whileHover={{ x: 10 }}
+                  className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors"
+                >
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
                     <Users className="text-green-600 h-5 w-5" />
                   </div>
@@ -288,7 +408,7 @@ export function LandingPage() {
                   <button className="px-3 py-1 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple text-sm font-medium">
                     စာပို့မည်
                   </button>
-                </div>
+                </motion.div>
               </div>
               
               <div className="mt-6">
@@ -304,7 +424,14 @@ export function LandingPage() {
       {/* Developer Section */}
       <div id="developer" className="py-12 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-6 md:p-8 border border-white/50 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            whileHover={{ y: -5 }}
+            className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-6 md:p-8 border border-white/50 text-center"
+          >
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Sitt Min Thar</h2>
             <p className="text-lg text-gray-600 mb-2">Full Stack Developer</p>
             <p className="text-gray-700 mb-8">
@@ -328,7 +455,7 @@ export function LandingPage() {
                 Contact Me
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -375,7 +502,12 @@ export function LandingPage() {
             </div>
             
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 w-full max-w-md mx-auto border border-white/50">
-              <div className="text-center mb-6 sm:mb-8">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-center mb-6 sm:mb-8"
+              >
                 <div className="flex justify-center mb-3 sm:mb-4">
                   <Logo size="md" />
                 </div>
@@ -385,7 +517,7 @@ export function LandingPage() {
                 <p className="text-gray-600 text-sm sm:text-base">
                   {isLogin ? 'Sign in to continue to your family dashboard' : 'Join us to manage your family efficiently'}
                 </p>
-              </div>
+              </motion.div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (

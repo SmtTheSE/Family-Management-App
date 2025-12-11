@@ -18,7 +18,7 @@ const categories = [
   { value: 'food', label: 'အစားအစာ', color: 'bg-red-500' },
   { value: 'transport', label: 'သယ်ယူပို့ဆောင်ရေး', color: 'bg-blue-500' },
   { value: 'housing', label: 'အိမ်နေရာ', color: 'bg-green-500' },
-  { value: 'utilities', label: 'တွန်းအား', color: 'bg-yellow-500' },
+  { value: 'utilities', label: 'အသုံးအဆောင်များ', color: 'bg-yellow-500' },
   { value: 'entertainment', label: 'ဖျော်ဖြေရေး', color: 'bg-purple-500' },
   { value: 'health', label: 'ကျန်းမာရေး', color: 'bg-pink-500' },
   { value: 'education', label: 'ပညာရေး', color: 'bg-indigo-500' },
