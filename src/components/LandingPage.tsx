@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Logo } from './Logo';
 import { useAuth } from '../contexts/AuthContext';
-import { Wallet, Home, ChefHat, ShoppingCart, MessageSquare } from 'lucide-react';
+import { Wallet, Home, ChefHat, ShoppingCart, FileText, Users } from 'lucide-react';
 
 export function LandingPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -58,9 +58,9 @@ export function LandingPage() {
       description: 'Track your family expenses, categorize spending, and gain insights into your financial habits.'
     },
     {
-      icon: MessageSquare,
-      title: 'AI အကူအညီ',
-      description: 'Get AI-powered assistance with Myanmar language support. Ask questions about home management, recipes, and more.'
+      icon: FileText,
+      title: 'မှတ်စု & ဆက်သွယ်ရန်',
+      description: 'Organize important notes and contacts in one place. Categorize and search easily.'
     }
   ];
 
@@ -84,7 +84,7 @@ export function LandingPage() {
                   <span className="block text-gray-800 mt-2">Like Never Before</span>
                 </h1>
                 <p className="mt-3 text-base sm:text-lg md:text-xl lg:text-xl text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                  The ultimate family management solution. Organize your home, recipes, shopping lists, expenses, and get AI-powered assistance - all in one beautifully designed app.
+                  The ultimate family management solution. Organize your home, recipes, shopping lists, expenses, notes & contacts - all in one beautifully designed app.
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div className="rounded-md shadow">
@@ -131,8 +131,8 @@ export function LandingPage() {
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <div key={index} className="relative">
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gray-900 text-white">
+                  <div key={index} className="relative group">
+                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gray-900 text-white group-hover:bg-black transition-colors duration-300">
                       <Icon className="h-6 w-6" />
                     </div>
                     <div className="ml-16">
@@ -149,83 +149,102 @@ export function LandingPage() {
         </div>
       </div>
 
-      {/* Expense Tracker Preview */}
+      {/* Notes & Contacts Preview */}
       <div className="py-12 bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">စာရင်းကုန်ကျမှုများ</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">မှတ်စု & ဆက်သွယ်ရန်</h2>
             <p className="mt-4 max-w-2xl text-lg md:text-xl text-gray-600 lg:mx-auto">
-              Track your family expenses with our intuitive expense tracker
+              Organize your notes and contacts in one convenient place
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-gray-500 text-sm">Total Expenses</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">125,000 Ks</div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Notes Preview */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center mb-6">
+                <FileText className="h-6 w-6 text-blue-600 mr-2" />
+                <h3 className="text-xl font-bold text-gray-900">မှတ်စုများ</h3>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-gray-500 text-sm">Categories</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">5</div>
+              
+              <div className="space-y-4">
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
+                  <div className="flex justify-between">
+                    <h4 className="font-medium">ဆေးညွှန်း မှတ်စု</h4>
+                    <span className="text-xs text-gray-500">2 နာရီအကြာ</span>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-2">ဆရာဝန်နှင့် တွေ့ဆုံမည့် နေ့ရက် သတိရ ပေးရန်</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">ကျန်းမာရေး</span>
+                    <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">အရေးကြီး</span>
+                  </div>
+                </div>
+                
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
+                  <div className="flex justify-between">
+                    <h4 className="font-medium">စျေးဝယ်စာရင်း</h4>
+                    <span className="text-xs text-gray-500">မနေ့က</span>
+                  </div>
+                  <ul className="text-gray-600 text-sm mt-2 list-disc pl-5 space-y-1">
+                    <li>နို့</li>
+                    <li>ဥ</li>
+                    <li>ပဲစပါး</li>
+                  </ul>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">စျေးဝယ်</span>
+                  </div>
+                </div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-gray-500 text-sm">This Month</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">32</div>
+              
+              <div className="mt-6">
+                <button className="btn-secondary w-full py-3">
+                  မှတ်စုများကို ကြည့်ရန်
+                </button>
               </div>
             </div>
             
-            <div className="border rounded-lg overflow-hidden">
-              <div className="grid grid-cols-12 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-500 border-b">
-                <div className="col-span-5">Description</div>
-                <div className="col-span-3">Category</div>
-                <div className="col-span-2">Date</div>
-                <div className="col-span-2 text-right">Amount</div>
+            {/* Contacts Preview */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center mb-6">
+                <Users className="h-6 w-6 text-green-600 mr-2" />
+                <h3 className="text-xl font-bold text-gray-900">ဆက်သွယ်ရန်များ</h3>
               </div>
-              <div className="divide-y">
-                <div className="grid grid-cols-12 px-4 py-3 text-sm">
-                  <div className="col-span-5">
-                    <div className="font-medium">Weekly Groceries</div>
-                    <div className="text-gray-500 text-xs">Supermarket shopping</div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                    <Users className="text-blue-600 h-5 w-5" />
                   </div>
-                  <div className="col-span-3 flex items-center">
-                    <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                    Food
+                  <div className="flex-1">
+                    <h4 className="font-medium">ဆရာဝန်မောင်မောင်</h4>
+                    <p className="text-gray-600 text-sm">ကျန်းမာရေး</p>
+                    <p className="text-gray-500 text-xs">၀၉၁၂၃၄၅၆၇၈</p>
                   </div>
-                  <div className="col-span-2 text-gray-500">Dec 5</div>
-                  <div className="col-span-2 text-right font-medium">42,000 Ks</div>
+                  <button className="btn-secondary text-sm px-3 py-1">
+                    ခေါ်မည်
+                  </button>
                 </div>
-                <div className="grid grid-cols-12 px-4 py-3 text-sm">
-                  <div className="col-span-5">
-                    <div className="font-medium">Electricity Bill</div>
-                    <div className="text-gray-500 text-xs">Monthly utility</div>
+                
+                <div className="flex items-center border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                    <Users className="text-green-600 h-5 w-5" />
                   </div>
-                  <div className="col-span-3 flex items-center">
-                    <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
-                    Utilities
+                  <div className="flex-1">
+                    <h4 className="font-medium">မောင်မောင်</h4>
+                    <p className="text-gray-600 text-sm">မိသားစု</p>
+                    <p className="text-gray-500 text-xs">၀၉၈၇၆၅၄၃၂၁</p>
                   </div>
-                  <div className="col-span-2 text-gray-500">Dec 1</div>
-                  <div className="col-span-2 text-right font-medium">28,500 Ks</div>
-                </div>
-                <div className="grid grid-cols-12 px-4 py-3 text-sm">
-                  <div className="col-span-5">
-                    <div className="font-medium">Dinner Out</div>
-                    <div className="text-gray-500 text-xs">Restaurant dinner</div>
-                  </div>
-                  <div className="col-span-3 flex items-center">
-                    <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                    Entertainment
-                  </div>
-                  <div className="col-span-2 text-gray-500">Nov 28</div>
-                  <div className="col-span-2 text-right font-medium">18,000 Ks</div>
+                  <button className="btn-secondary text-sm px-3 py-1">
+                    စာပို့မည်
+                  </button>
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-6 text-center">
-              <button className="btn-primary px-6 py-3">
-                Get Started with Expense Tracking
-              </button>
+              
+              <div className="mt-6">
+                <button className="btn-primary w-full py-3">
+                  ဆက်သွယ်ရန်များကို ကြည့်ရန်
+                </button>
+              </div>
             </div>
           </div>
         </div>
