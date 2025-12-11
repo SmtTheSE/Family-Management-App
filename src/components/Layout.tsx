@@ -87,14 +87,14 @@ export function Layout() {
               <div className="relative">
                 <button
                   onClick={() => setShowSignOutOptions(!showSignOutOptions)}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-gradient-to-r from-red-50 to-red-100 hover:text-red-600 transition-all duration-200 ease-apple"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-gradient-to-r from-red-50 to-red-100 hover:text-red-600 transition-all duration-200 ease-apple backdrop-blur-sm border border-gray-200 hover-lift"
                 >
                   <LogOut size={18} />
                   <span>ထွက်မည်</span>
                 </button>
                 
                 {showSignOutOptions && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-64 bg-white/80 backdrop-blur-xl rounded-xl shadow-lg border border-gray-200 py-2 z-50">
                     <button
                       onClick={() => {
                         signOut();
@@ -121,7 +121,7 @@ export function Layout() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden flex items-center justify-center rounded-lg w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-700 transition-all duration-200 ease-apple shadow-sm"
+              className="md:hidden flex items-center justify-center rounded-lg w-10 h-10 sm:w-12 sm:h-12 btn-icon hover-lift"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
               {menuOpen ? <X size={20} className="sm:size-24" /> : <Menu size={20} className="sm:size-24" />}
@@ -153,7 +153,7 @@ export function Layout() {
                   signOut();
                   setMenuOpen(false);
                 }}
-                className="flex items-center space-x-3 w-full px-4 py-4 rounded-lg text-gray-600 hover:bg-gradient-to-r from-red-50 to-red-100 hover:text-red-600 transition-all duration-200 ease-apple justify-start"
+                className="flex items-center space-x-3 w-full px-4 py-4 rounded-lg text-gray-600 hover:bg-gradient-to-r from-red-50 to-red-100 hover:text-red-600 transition-all duration-200 ease-apple justify-start backdrop-blur-sm border border-gray-200 hover-lift"
               >
                 <LogOut size={20} />
                 <span className="font-medium text-base">ထွက်မည် (ဤစက်မှ)</span>
@@ -163,7 +163,7 @@ export function Layout() {
                   signOutAllDevices();
                   setMenuOpen(false);
                 }}
-                className="flex items-center space-x-3 w-full px-4 py-4 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 ease-apple justify-start"
+                className="flex items-center space-x-3 w-full px-4 py-4 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 ease-apple justify-start backdrop-blur-sm border border-gray-200 hover-lift"
               >
                 <LogOut size={20} />
                 <span className="font-medium text-base">အားလုံးစက်မှ ထွက်မည်</span>

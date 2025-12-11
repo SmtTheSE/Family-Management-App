@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Users, Heart, ShoppingCart, Search, Plus, Filter, Edit2, Trash2, Save, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { CustomAlert } from './CustomAlert';
 
 interface Note {
   id: string;
@@ -31,6 +32,7 @@ export function NotesAndContacts() {
   const [loading, setLoading] = useState(true);
   const [notesSearchTerm, setNotesSearchTerm] = useState('');
   const [contactsSearchTerm, setContactsSearchTerm] = useState('');
+  const [alert, setAlert] = useState<{type: 'success' | 'error' | 'warning' | 'info', message: string} | null>(null);
   
   // Form states
   const [showNoteForm, setShowNoteForm] = useState(false);
@@ -84,9 +86,9 @@ export function NotesAndContacts() {
       
       setNotes(notesData || []);
       setContacts(contactsData || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading data:', error);
-      alert('ข้อมูลโหลดไม่สำเร็จ โปรดลองอีกครั้ง');
+      showAlert('error', 'ข้อมูลโหลดไม่สำเร็จ โปรดลองอีกครั้ง: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -116,6 +118,7 @@ export function NotesAndContacts() {
           .eq('user_id', user.id);
         
         if (error) throw error;
+        showAlert('success', 'โน้ตถูกอัปเดตเรียบร้อยแล้ว');
       } else {
         // Insert new note
         const { error } = await supabase
@@ -129,14 +132,15 @@ export function NotesAndContacts() {
           });
         
         if (error) throw error;
+        showAlert('success', 'โน้ตใหม่ถูกสร้างเรียบร้อยแล้ว');
       }
       
       // Reset form and reload data
       resetNoteForm();
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving note:', error);
-      alert('บันทึกโน้ตไม่สำเร็จ โปรดลองอีกครั้ง');
+      showAlert('error', 'บันทึกโน้ตไม่สำเร็จ โปรดลองอีกครั้ง: ' + error.message);
     }
   };
 
@@ -163,6 +167,7 @@ export function NotesAndContacts() {
           .eq('user_id', user.id);
         
         if (error) throw error;
+        showAlert('success', 'ผู้ติดต่อถูกอัปเดตเรียบร้อยแล้ว');
       } else {
         // Insert new contact
         const { error } = await supabase
@@ -177,14 +182,15 @@ export function NotesAndContacts() {
           });
         
         if (error) throw error;
+        showAlert('success', 'ผู้ติดต่อใหม่ถูกสร้างเรียบร้อยแล้ว');
       }
       
       // Reset form and reload data
       resetContactForm();
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving contact:', error);
-      alert('บันทึกผู้ติดต่อไม่สำเร็จ โปรดลองอีกครั้ง');
+      showAlert('error', 'บันทึกผู้ติดต่อไม่สำเร็จ โปรดลองอีกครั้ง: ' + error.message);
     }
   };
 
@@ -203,10 +209,11 @@ export function NotesAndContacts() {
       
       if (error) throw error;
       
+      showAlert('success', 'โน้ตถูกลบเรียบร้อยแล้ว');
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting note:', error);
-      alert('ลบโน้ตไม่สำเร็จ โปรดลองอีกครั้ง');
+      showAlert('error', 'ลบโน้ตไม่สำเร็จ โปรดลองอีกครั้ง: ' + error.message);
     }
   };
 
@@ -225,10 +232,11 @@ export function NotesAndContacts() {
       
       if (error) throw error;
       
+      showAlert('success', 'ผู้ติดต่อถูกลบเรียบร้อยแล้ว');
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting contact:', error);
-      alert('ลบผู้ติดต่อไม่สำเร็จ โปรดลองอีกครั้ง');
+      showAlert('error', 'ลบผู้ติดต่อไม่สำเร็จ โปรดลองอีกครั้ง: ' + error.message);
     }
   };
 
@@ -299,6 +307,14 @@ export function NotesAndContacts() {
     { id: 4, name: "အထွေထွေ", icon: FileText, color: "gray", count: notes.filter(n => n.category === 'အထွေထွေ').length + contacts.filter(c => c.category === 'အထွေထွေ').length }
   ];
 
+  const showAlert = (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
+    setAlert({ type, message });
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -309,6 +325,15 @@ export function NotesAndContacts() {
 
   return (
     <div className="space-y-6">
+      {/* Alert Component */}
+      {alert && (
+        <CustomAlert 
+          type={alert.type} 
+          message={alert.message} 
+          onClose={closeAlert} 
+        />
+      )}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h2 className="heading-hero text-primary flex items-center">
           <FileText className="mr-3 text-blue-500" size={32} />
@@ -347,7 +372,7 @@ export function NotesAndContacts() {
                 <h3 className="heading-section">
                   {editingNote ? 'မှတ်စုပြင်ဆင်ရန်' : 'မှတ်စုအသစ်'}
                 </h3>
-                <button onClick={resetNoteForm} className="text-gray-500 hover:text-gray-700">
+                <button onClick={resetNoteForm} className="btn-icon">
                   <X size={24} />
                 </button>
               </div>
@@ -435,7 +460,7 @@ export function NotesAndContacts() {
                 <h3 className="heading-section">
                   {editingContact ? 'ဆက်သွယ်ရန်ပြင်ဆင်ရန်' : 'ဆက်သွယ်ရန်အသစ်'}
                 </h3>
-                <button onClick={resetContactForm} className="text-gray-500 hover:text-gray-700">
+                <button onClick={resetContactForm} className="btn-icon">
                   <X size={24} />
                 </button>
               </div>
@@ -543,7 +568,7 @@ export function NotesAndContacts() {
                       placeholder="မှတ်စုများတွင် ရှာဖွေရန်..." 
                       value={notesSearchTerm}
                       onChange={(e) => setNotesSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent input-apple"
                     />
                   </div>
                   <button className="btn-icon">
@@ -563,13 +588,13 @@ export function NotesAndContacts() {
                           <div className="flex space-x-2">
                             <button 
                               onClick={() => handleEditNote(note)}
-                              className="text-gray-500 hover:text-blue-500"
+                              className="btn-icon"
                             >
                               <Edit2 size={18} />
                             </button>
                             <button 
                               onClick={() => handleDeleteNote(note.id)}
-                              className="text-gray-500 hover:text-red-500"
+                              className="btn-icon text-red-600 hover:bg-red-50"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -624,7 +649,7 @@ export function NotesAndContacts() {
                       placeholder="ဆက်သွယ်ရန်များတွင် ရှာဖွေရန်..." 
                       value={contactsSearchTerm}
                       onChange={(e) => setContactsSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent input-apple"
                     />
                   </div>
                   <button className="btn-icon">
@@ -654,13 +679,13 @@ export function NotesAndContacts() {
                         <div className="flex flex-col space-y-2">
                           <button 
                             onClick={() => handleEditContact(contact)}
-                            className="text-gray-500 hover:text-blue-500"
+                            className="btn-icon"
                           >
                             <Edit2 size={18} />
                           </button>
                           <button 
                             onClick={() => handleDeleteContact(contact.id)}
-                            className="text-gray-500 hover:text-red-500"
+                            className="btn-icon text-red-600 hover:bg-red-50"
                           >
                             <Trash2 size={18} />
                           </button>

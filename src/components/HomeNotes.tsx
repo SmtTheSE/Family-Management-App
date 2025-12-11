@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, Save, X, Home as HomeIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { CustomAlert } from './CustomAlert';
 
 interface Note {
   id: string;
@@ -29,6 +30,7 @@ export function HomeNotes() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState<{type: 'success' | 'error' | 'warning' | 'info', message: string} | null>(null);
   const { user } = useAuth();
   
   // Items per page for pagination
@@ -55,9 +57,13 @@ export function HomeNotes() {
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    setNotes(data);
-    if (count) {
-      setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
+    if (error) {
+      showAlert('error', 'မှတ်စုများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
+    } else {
+      setNotes(data || []);
+      if (count) {
+        setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
+      }
     }
     
     setLoading(false);
@@ -81,6 +87,7 @@ export function HomeNotes() {
 
         if (error) throw error;
         
+        showAlert('success', 'မှတ်စုကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။');
         loadNotes();
         resetForm();
       } else {
@@ -93,14 +100,15 @@ export function HomeNotes() {
 
         if (error) throw error;
         
+        showAlert('success', 'မှတ်စုအသစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။');
         // Reset to first page to see the new note
         setCurrentPage(1);
         loadNotes();
         resetForm();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving note:', error);
-      alert('မှတ်စုကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'မှတ်စုကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
     }
   };
 
@@ -111,10 +119,12 @@ export function HomeNotes() {
       const { error } = await supabase.from('home_notes').delete().eq('id', id);
       
       if (error) throw error;
+      
+      showAlert('success', 'မှတ်စုကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။');
       loadNotes();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting note:', error);
-      alert('မှတ်စုကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'မှတ်စုကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
     }
   };
 
@@ -159,8 +169,25 @@ export function HomeNotes() {
     }
   };
 
+  const showAlert = (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
+    setAlert({ type, message });
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+
   return (
     <div className="space-y-6 md:space-y-8">
+      {/* Alert Component */}
+      {alert && (
+        <CustomAlert 
+          type={alert.type} 
+          message={alert.message} 
+          onClose={closeAlert} 
+        />
+      )}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 pb-4">
         {/* Fixed text clipping issue by using solid color instead of gradient */}
         <h2 className="heading-hero text-gray-900">
@@ -168,7 +195,7 @@ export function HomeNotes() {
         </h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center py-2.5 sm:py-3"
+          className="btn-primary flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center"
         >
           {showForm && !editingNote ? <X size={18} className="sm:size-20" /> : <Plus size={18} className="sm:size-20" />}
           <span className="text-sm sm:text-base">{showForm && !editingNote ? 'ပိတ်မည်' : 'မှတ်စုအသစ်'}</span>
@@ -232,7 +259,7 @@ export function HomeNotes() {
               <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
                 <button
                   type="submit"
-                  className="btn-primary flex items-center justify-center space-x-2 hover-lift w-full sm:w-auto py-2.5 sm:py-3"
+                  className="btn-primary flex items-center justify-center space-x-2 hover-lift w-full sm:w-auto"
                 >
                   <Save size={18} className="sm:size-20" />
                   <span className="text-sm sm:text-base">{editingNote ? 'အပ်ဒိတ်လုပ်မည်' : 'သိမ်းမည်'}</span>
@@ -240,7 +267,7 @@ export function HomeNotes() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn-secondary hover-lift w-full sm:w-auto py-2.5 sm:py-3 text-sm sm:text-base"
+                  className="btn-secondary hover-lift w-full sm:w-auto text-sm sm:text-base"
                 >
                   မလုပ်တော့ဘူး
                 </button>
@@ -276,14 +303,14 @@ export function HomeNotes() {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleEdit(note)}
-                          className="btn-icon-secondary hover-lift"
+                          className="btn-icon hover-lift"
                           aria-label="Edit"
                         >
                           <Edit2 size={18} className="sm:size-20" />
                         </button>
                         <button
                           onClick={() => handleDelete(note.id)}
-                          className="btn-icon-secondary text-red-600 hover:bg-red-50 hover-lift"
+                          className="btn-icon text-red-600 hover:bg-red-50 hover-lift"
                           aria-label="Delete"
                         >
                           <Trash2 size={18} className="sm:size-20" />
@@ -319,7 +346,7 @@ export function HomeNotes() {
                   className={`relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${
                     currentPage === 1 
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                      : 'btn-secondary'
                   }`}
                 >
                   ရှေ့သို့
@@ -330,7 +357,7 @@ export function HomeNotes() {
                   className={`relative ml-3 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${
                     currentPage === totalPages 
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                      : 'btn-secondary'
                   }`}
                 >
                   နောက်သို့
@@ -351,7 +378,7 @@ export function HomeNotes() {
                       className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${
                         currentPage === 1 
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-white text-gray-700 hover:bg-gray-50'
+                          : 'btn-icon'
                       }`}
                       aria-label="Previous"
                     >
@@ -373,10 +400,10 @@ export function HomeNotes() {
                           <button
                             key={page}
                             onClick={() => goToPage(page)}
-                            className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
+                            className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md ${
                               isCurrent
-                                ? 'z-10 bg-blue-600 text-white'
-                                : 'bg-white text-gray-700 hover:bg-gray-50'
+                                ? 'btn-primary'
+                                : 'btn-secondary'
                             }`}
                             aria-current={isCurrent ? 'page' : undefined}
                           >
@@ -406,7 +433,7 @@ export function HomeNotes() {
                       className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${
                         currentPage === totalPages 
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-white text-gray-700 hover:bg-gray-50'
+                          : 'btn-icon'
                       }`}
                       aria-label="Next"
                     >
@@ -430,7 +457,7 @@ export function HomeNotes() {
             </p>
             <button
               onClick={() => setShowForm(true)}
-              className="btn-primary inline-flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center py-2.5 sm:py-3"
+              className="btn-primary inline-flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center"
             >
               <Plus size={18} className="sm:size-20" />
               <span className="text-sm sm:text-base">မှတ်စုအသစ် ထည့်ရန်</span>

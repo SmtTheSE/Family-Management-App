@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, TrendingUp, PieChart } from 'lucide-react';
+import { Plus, Trash2, Edit2, TrendingUp, PieChart, X, Save } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { CustomAlert } from './CustomAlert';
 
 interface Expense {
   id: string;
@@ -35,6 +36,7 @@ export function ExpenseTracker() {
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [alert, setAlert] = useState<{type: 'success' | 'error' | 'warning' | 'info', message: string} | null>(null);
   const { user } = useAuth();
 
   // Load expenses from database
@@ -52,8 +54,10 @@ export function ExpenseTracker() {
 
       if (error) throw error;
       setExpenses(data || []);
-    } catch (err) {
+      showAlert('success', 'စာရင်းများ ဆွဲယူပြီးပါပြီ');
+    } catch (err: any) {
       setError('စာရင်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'စာရင်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်: ' + err.message);
       console.error('Error loading expenses:', err);
     } finally {
       setLoading(false);
@@ -87,6 +91,7 @@ export function ExpenseTracker() {
           .eq('id', editingExpense.id);
 
         if (error) throw error;
+        showAlert('success', 'စာရင်းကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ');
       } else {
         // Insert new expense
         const { error } = await supabase
@@ -94,13 +99,15 @@ export function ExpenseTracker() {
           .insert([expenseData]);
 
         if (error) throw error;
+        showAlert('success', 'စာရင်းအသစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ');
       }
 
       // Reset form and reload expenses
       resetForm();
       loadExpenses();
-    } catch (err) {
+    } catch (err: any) {
       setError('စာရင်းကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'စာရင်းကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်: ' + err.message);
       console.error('Error saving expense:', err);
     }
   };
@@ -125,9 +132,11 @@ export function ExpenseTracker() {
         .eq('id', id);
 
       if (error) throw error;
+      
+      showAlert('success', 'စာရင်းကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ');
       loadExpenses();
-    } catch (err) {
-      setError('စာရင်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
+    } catch (err: any) {
+      showAlert('error', 'စာရင်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်: ' + err.message);
       console.error('Error deleting expense:', err);
     }
   };
@@ -155,15 +164,32 @@ export function ExpenseTracker() {
     return acc;
   }, {});
 
+  const showAlert = (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
+    setAlert({ type, message });
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Alert Component */}
+      {alert && (
+        <CustomAlert 
+          type={alert.type} 
+          message={alert.message} 
+          onClose={closeAlert} 
+        />
+      )}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="heading-hero text-gray-900">စာရင်းကုန်ကျမှုများ</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center py-2.5 sm:py-3"
+          className="btn-primary flex items-center space-x-2 hover-lift w-full sm:w-auto justify-center"
         >
-          {showForm && !editingExpense ? <Trash2 size={18} /> : <Plus size={18} />}
+          {showForm && !editingExpense ? <X size={18} className="sm:size-20" /> : <Plus size={18} className="sm:size-20" />}
           <span className="text-sm sm:text-base">{showForm && !editingExpense ? 'ပိတ်မည်' : 'စာရင်းအသစ်'}</span>
         </button>
       </div>
@@ -190,7 +216,7 @@ export function ExpenseTracker() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
+                  className="input-apple w-full"
                   placeholder="ဥပမာ: နှစ်သစ်ကူးပွဲအတွက် စားသောက်ကုန်များ"
                   required
                 />
@@ -203,44 +229,43 @@ export function ExpenseTracker() {
                   </label>
                   <input
                     type="number"
+                    step="0.01"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
-                    placeholder="0.00"
-                    min="0.01"
-                    step="0.01"
+                    className="input-apple w-full"
+                    placeholder="ဥပမာ: 10000"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ရက်စွဲ
+                    အမျိုးအစား
                   </label>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
-                  />
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="select-apple w-full"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  အမျိုးအစား
+                  ရက်စွဲ
                 </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent select-apple"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="input-apple w-full"
+                />
               </div>
 
               <div>
@@ -250,25 +275,26 @@ export function ExpenseTracker() {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent textarea-apple"
-                  placeholder="ဖော်ပြချက် (မဖြည့်စွက်လည်း ရပါသည်)"
                   rows={3}
+                  className="textarea-apple w-full"
+                  placeholder="ဖော်ပြချက် (မဖြည့်စွက်လည်း ရပါသည်)"
                 />
               </div>
 
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-2">
+              <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0 pt-4">
                 <button
                   type="submit"
-                  className="btn-primary flex-1 flex items-center justify-center py-2.5"
+                  className="btn-primary flex items-center justify-center space-x-2 hover-lift w-full sm:w-auto"
                 >
-                  <span>{editingExpense ? 'အပ်ဒိတ်လုပ်မည်' : 'ထည့်မည်'}</span>
+                  <Save size={18} className="sm:size-20" />
+                  <span className="text-sm sm:text-base">{editingExpense ? 'ပြင်ဆင်မည်' : 'သိမ်းမည်'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn-secondary flex-1 flex items-center justify-center py-2.5"
+                  className="btn-secondary hover-lift w-full sm:w-auto text-sm sm:text-base"
                 >
-                  <span>မလုပ်တော့ဘူး</span>
+                  မလုပ်တော့ပါ
                 </button>
               </div>
             </form>
@@ -277,133 +303,128 @@ export function ExpenseTracker() {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <div className="apple-card">
-          <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-blue-100">
-                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">စုစုပေါင်းကုန်ကျမှု</p>
-                <p className="text-lg sm:text-xl font-semibold text-gray-900">
-                  {totalExpenses.toLocaleString()} Ks
-                </p>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="apple-card p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-blue-100">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">စုစုပေါင်း ကုန်ကျမှု</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalExpenses.toLocaleString()} <span className="text-lg">MMK</span>
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="apple-card">
-          <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-green-100">
-                <PieChart className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">စာရင်းအမျိုးအစားများ</p>
-                <p className="text-lg sm:text-xl font-semibold text-gray-900">{Object.keys(expensesByCategory).length}</p>
-              </div>
+        <div className="apple-card p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-green-100">
+              <PieChart className="h-6 w-6 text-green-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">အမျိုးအစားများ</p>
+              <p className="text-2xl font-bold text-gray-900">{Object.keys(expensesByCategory).length}</p>
             </div>
           </div>
         </div>
 
-        <div className="apple-card">
-          <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-purple-100">
-                <PieChart className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">စာရင်းအရေအတွက်</p>
-                <p className="text-lg sm:text-xl font-semibold text-gray-900">{expenses.length}</p>
-              </div>
+        <div className="apple-card p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-purple-100">
+              <Edit2 className="h-6 w-6 text-purple-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">စာရင်းများ</p>
+              <p className="text-2xl font-bold text-gray-900">{expenses.length}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Expenses List */}
-      {loading ? (
-        <div className="text-center py-8 sm:py-12 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-100/50">
-          <div className="max-w-md mx-auto">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <h3 className="heading-section text-primary mb-2">Loading...</h3>
-            <p className="body-text text-secondary">
-              စာရင်းများ ဆွဲယူနေပါသည်...
-            </p>
-          </div>
+      <div className="apple-card">
+        <div className="p-6 border-b border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900">စာရင်းများ</h3>
         </div>
-      ) : expenses.length > 0 ? (
-        <div className="space-y-4">
-          {expenses.map((expense) => {
-            const categoryDetails = getCategoryDetails(expense.category);
-            return (
-              <div key={expense.id} className="apple-card hover-lift">
-                <div className="p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center">
-                        <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${categoryDetails.color} mr-2 sm:mr-3`}></span>
-                        <h3 className="heading-card text-gray-900">{expense.title}</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ခေါင်းစဉ်
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ပမာဏ
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  အမျိုးအစား
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ရက်စွဲ
+                </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  လုပ်ဆောင်ချက်များ
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {expenses.map((expense) => {
+                const categoryDetails = getCategoryDetails(expense.category);
+                return (
+                  <tr key={expense.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{expense.title}</div>
+                      {expense.description && (
+                        <div className="text-sm text-gray-500">{expense.description}</div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 font-medium">
+                        {expense.amount.toLocaleString()} MMK
                       </div>
-                      <p className="text-gray-600 mt-2 text-sm sm:text-base">{expense.description}</p>
-                      <div className="flex flex-wrap gap-3 mt-3">
-                        <span className="text-xs sm:text-sm text-gray-500">
-                          {new Date(expense.date).toLocaleDateString('my-MM')}
-                        </span>
-                        <span className="text-xs sm:text-sm text-gray-500">{categoryDetails.label}</span>
-                      </div>
-                    </div>
-                    <div className="text-right sm:text-left min-w-fit">
-                      <p className="text-lg sm:text-xl font-semibold text-gray-900">
-                        {expense.amount.toLocaleString()} Ks
-                      </p>
-                      <div className="flex sm:flex-col space-x-2 sm:space-x-0 sm:space-y-2 mt-3 justify-end sm:justify-start">
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${categoryDetails.color} text-white`}>
+                        {categoryDetails.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(expense.date).toLocaleDateString('my-MM')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => handleEdit(expense)}
-                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          aria-label="ပြင်ဆင်ရန်"
+                          className="btn-icon"
+                          aria-label="Edit"
                         >
-                          <Edit2 size={16} className="sm:size-18" />
+                          <Edit2 size={18} className="sm:size-20" />
                         </button>
                         <button
                           onClick={() => handleDelete(expense.id)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          aria-label="ဖျက်မည်"
+                          className="btn-icon text-red-600 hover:bg-red-50"
+                          aria-label="Delete"
                         >
-                          <Trash2 size={16} className="sm:size-18" />
+                          <Trash2 size={18} className="sm:size-20" />
                         </button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                    </td>
+                  </tr>
+                );
+              })}
+              {expenses.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    စာရင်းများ မရှိသေးပါ
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      ) : (
-        <div className="text-center py-8 sm:py-12 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-100/50">
-          <div className="max-w-md mx-auto">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <PieChart className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
-            </div>
-            <h3 className="heading-section text-primary mb-2">စာရင်းများ မရှိသေးပါ</h3>
-            <p className="body-text text-secondary mb-6">
-              သင့်ကုန်ကျမှုများကို စီမံခန့်ခွဲရန် စာရင်းအသစ် ထည့်ပါ
-            </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="btn-primary inline-flex items-center space-x-2"
-            >
-              <Plus size={18} />
-              <span>စာရင်းအသစ်ထည့်မည်</span>
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, Edit2, Save, X, Clock, Users, Search, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Clock, Users, Search, Upload, ShoppingCart, ChefHat } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { CustomAlert } from './CustomAlert';
 
 interface Recipe {
   id: string;
@@ -34,6 +35,7 @@ export function Recipes() {
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('all');
+  const [alert, setAlert] = useState<{type: 'success' | 'error' | 'warning' | 'info', message: string} | null>(null);
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,11 +69,12 @@ export function Recipes() {
 
     if (error) {
       console.error('Error loading recipes:', error);
-      alert('ချက်ပြုတ်နည်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'ချက်ပြုတ်နည်းများ ဆွဲယူရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
       return;
     }
     
     setRecipes(data || []);
+    showAlert('success', 'ချက်ပြုတ်နည်းများ ဆွဲယူပြီးပါပြီ');
   };
 
   const filterRecipes = () => {
@@ -115,9 +118,10 @@ export function Recipes() {
 
       setFormData({ ...formData, image_url: publicUrl });
       setImagePreview(publicUrl);
-    } catch (error) {
+      showAlert('success', 'ဓာတ်ပုံကို အောင်မြင်စွာ တင်ပြီးပါပြီ');
+    } catch (error: any) {
       console.error('Error uploading image:', error);
-      alert('ဓာတ်ပုံတင်ခြင်း မအောင်မြင်ပါ');
+      showAlert('error', 'ဓာတ်ပုံတင်ခြင်း မအောင်မြင်ပါ: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -129,13 +133,13 @@ export function Recipes() {
       
       // Validate file type
       if (!file.type.match('image.*')) {
-        alert('ဓာတ်ပုံဖိုင်သာ တင်နိုင်ပါသည်');
+        showAlert('error', 'ဓာတ်ပုံဖိုင်သာ တင်နိုင်ပါသည်');
         return;
       }
       
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        alert('ဓာတ်ပုံဖိုင် အရွယ်အစား ၅ MB ထက် ကျော်နေပါသည်');
+        showAlert('error', 'ဓာတ်ပုံဖိုင် အရွယ်အစား ၅ MB ထက် ကျော်နေပါသည်');
         return;
       }
       
@@ -167,6 +171,7 @@ export function Recipes() {
 
         if (error) throw error;
         
+        showAlert('success', 'ချက်နည်းကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ');
         loadRecipes();
         resetForm();
       } else {
@@ -177,12 +182,13 @@ export function Recipes() {
 
         if (error) throw error;
         
+        showAlert('success', 'ချက်နည်းအသစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ');
         loadRecipes();
         resetForm();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving recipe:', error);
-      alert('ချက်ပြုတ်နည်းကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'ချက်ပြုတ်နည်းကို သိမ်းဆည်းရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
     }
   };
 
@@ -193,10 +199,12 @@ export function Recipes() {
       const { error } = await supabase.from('recipes').delete().eq('id', id);
       
       if (error) throw error;
+      
+      showAlert('success', 'ချက်ပြုတ်နည်းကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ');
       loadRecipes();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting recipe:', error);
-      alert('ချက်ပြုတ်နည်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်');
+      showAlert('error', 'ချက်ပြုတ်နည်းကို ဖျက်ရာတွင် အမှားဖြစ်ခဲ့သည်: ' + error.message);
     }
   };
 
@@ -235,13 +243,30 @@ export function Recipes() {
     }
   };
 
+  const showAlert = (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
+    setAlert({ type, message });
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+
   return (
     <div id="recipes">
+      {/* Alert Component */}
+      {alert && (
+        <CustomAlert 
+          type={alert.type} 
+          message={alert.message} 
+          onClose={closeAlert} 
+        />
+      )}
+      
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 space-y-4 md:space-y-0">
         <h2 className="text-xl md:text-2xl font-bold text-gray-800">ချက်ပြုတ်နည်းများ</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center justify-center space-x-2 w-full md:w-auto py-2.5 sm:py-3"
+          className="btn-primary flex items-center justify-center space-x-2 w-full md:w-auto hover-lift"
         >
           {showForm ? <X size={18} className="sm:size-20" /> : <Plus size={18} className="sm:size-20" />}
           <span className="text-sm sm:text-base">{showForm ? 'ပိတ်မည်' : 'ချက်နည်းအသစ်'}</span>
@@ -256,13 +281,13 @@ export function Recipes() {
             placeholder="ချက်ပြုတ်နည်း ရှာရန်..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base input-apple"
+            className="input-apple w-full pl-10 pr-4"
           />
         </div>
         <select
           value={selectedCuisine}
           onChange={(e) => setSelectedCuisine(e.target.value)}
-          className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base select-apple w-full md:w-auto"
+          className="select-apple w-full md:w-auto"
         >
           <option value="all">အားလုံး</option>
           {cuisineTypes.map((type) => (
@@ -290,7 +315,7 @@ export function Recipes() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base input-apple"
+                  className="input-apple w-full"
                   required
                 />
               </div>
@@ -304,7 +329,7 @@ export function Recipes() {
                   onChange={(e) =>
                     setFormData({ ...formData, cuisine_type: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base select-apple"
+                  className="select-apple w-full"
                 >
                   {cuisineTypes.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -328,7 +353,7 @@ export function Recipes() {
                       prep_time: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base input-apple"
+                  className="input-apple w-full"
                 />
               </div>
 
@@ -346,7 +371,7 @@ export function Recipes() {
                       cook_time: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base input-apple"
+                  className="input-apple w-full"
                 />
               </div>
 
@@ -364,7 +389,7 @@ export function Recipes() {
                       servings: parseInt(e.target.value) || 1,
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base input-apple"
+                  className="input-apple w-full"
                 />
               </div>
 
@@ -383,7 +408,7 @@ export function Recipes() {
                   />
                   <label
                     htmlFor="image-upload"
-                    className="flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer w-full md:w-auto justify-center btn-secondary"
+                    className="flex items-center justify-center space-x-2 cursor-pointer w-full md:w-auto justify-center btn-secondary hover-lift"
                   >
                     <Upload size={18} className="sm:size-20" />
                     <span className="text-sm sm:text-base">ဓာတ်ပုံရွေးရန်</span>
@@ -393,7 +418,7 @@ export function Recipes() {
                   )}
                 </div>
                 {imagePreview && (
-                  <div className="mt-2">
+                  <div className="mt-3">
                     <img
                       src={imagePreview}
                       alt="Preview"
@@ -414,15 +439,14 @@ export function Recipes() {
                   setFormData({ ...formData, ingredients: e.target.value })
                 }
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base textarea-apple"
-                placeholder="တစ်ကြောင်းချင်းစီ ထည့်ပါ"
-                required
+                className="textarea-apple w-full"
+                placeholder="ဥပမာ: ကြက်သွန် ၂ ကောင်၊ ရေ ၁ လီတာ"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ချက်ပြုတ်နည်း
+                ချက်ပြုတ်နည်းလမ်း
               </label>
               <textarea
                 value={formData.instructions}
@@ -430,129 +454,124 @@ export function Recipes() {
                   setFormData({ ...formData, instructions: e.target.value })
                 }
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base textarea-apple"
-                placeholder="အဆင့်ဆင့် ချက်ပြုတ်နည်း ရေးပါ"
-                required
+                className="textarea-apple w-full"
+                placeholder="ချက်ပြုတ်နည်းလမ်းကို ရေးပါ"
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0 pt-4">
               <button
                 type="submit"
-                className="btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto justify-center py-2.5 sm:py-3"
-                disabled={uploading}
+                className="btn-primary flex items-center justify-center space-x-2 hover-lift w-full sm:w-auto"
               >
                 <Save size={18} className="sm:size-20" />
-                <span className="text-sm sm:text-base">{editingRecipe ? 'အပ်ဒိတ်လုပ်မည်' : 'သိမ်းမည်'}</span>
+                <span className="text-sm sm:text-base">{editingRecipe ? 'ပြင်ဆင်မည်' : 'သိမ်းမည်'}</span>
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="btn-secondary w-full sm:w-auto py-2.5 sm:py-3 text-sm sm:text-base"
+                className="btn-secondary hover-lift w-full sm:w-auto text-sm sm:text-base"
               >
-                မလုပ်တော့ဘူး
+                မလုပ်တော့ပါ
               </button>
             </div>
           </form>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {filteredRecipes.map((recipe) => (
-          <div
-            key={recipe.id}
-            className="apple-card hover-lift"
-          >
-            <div className="p-4 md:p-6">
+      {filteredRecipes.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRecipes.map((recipe) => (
+            <div key={recipe.id} className="apple-card hover-lift">
               {recipe.image_url ? (
                 <img
                   src={recipe.image_url}
                   alt={recipe.name}
-                  className="w-full h-40 md:h-48 object-cover rounded-lg mb-4"
+                  className="w-full h-48 object-cover rounded-t-2xl"
                 />
               ) : (
-                <div className="w-full h-40 md:h-48 bg-gray-100 flex items-center justify-center rounded-lg mb-4">
-                  <div className="text-gray-400 text-center px-4">
-                    <div className="text-lg mb-1">ဓာတ်ပုံမရှိပါ</div>
-                    <div className="text-sm">ဓာတ်ပုံထည့်ရန် ပြင်ဆင်ပါ</div>
-                  </div>
+                <div className="bg-gray-200 border-2 border-dashed rounded-t-2xl w-full h-48 flex items-center justify-center">
+                  <ShoppingCart className="h-12 w-12 text-gray-400" />
                 </div>
               )}
-              
-              <div className="flex justify-between items-start mb-3">
-                <span className="text-xs font-medium px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  {
-                    cuisineTypes.find((c) => c.value === recipe.cuisine_type)
-                      ?.label
-                  }
-                </span>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEdit(recipe)}
-                    className="text-gray-600 hover:text-teal-600 transition-colors p-2"
-                    aria-label="Edit"
-                  >
-                    <Edit2 size={18} className="sm:size-20" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(recipe.id)}
-                    className="text-gray-600 hover:text-red-600 transition-colors p-2"
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={18} className="sm:size-20" />
-                  </button>
+              <div className="p-5">
+                <div className="flex justify-between items-start">
+                  <h3 className="font-bold text-lg text-gray-900">{recipe.name}</h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEdit(recipe)}
+                      className="btn-icon"
+                      aria-label="Edit"
+                    >
+                      <Edit2 size={18} className="sm:size-20" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(recipe.id)}
+                      className="btn-icon text-red-600 hover:bg-red-50"
+                      aria-label="Delete"
+                    >
+                      <Trash2 size={18} className="sm:size-20" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                {recipe.name}
-              </h3>
-
-              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
-                <div className="flex items-center space-x-1">
-                  <Clock size={16} className="sm:size-18" />
-                  <span>{recipe.prep_time + recipe.cook_time} မိနစ်</span>
+                
+                <div className="mt-2 flex items-center text-sm text-gray-500">
+                  <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                    {cuisineTypes.find(t => t.value === recipe.cuisine_type)?.label || 'အခြား'}
+                  </span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Users size={16} className="sm:size-18" />
-                  <span>{recipe.servings} ဦး</span>
+                
+                {/* Display ingredients */}
+                {recipe.ingredients && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-900 text-sm">ပါဝင်ပစ္စည်းများ</h4>
+                    <p className="text-gray-600 text-sm mt-1 whitespace-pre-line">{recipe.ingredients}</p>
+                  </div>
+                )}
+                
+                {/* Display instructions */}
+                {recipe.instructions && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-900 text-sm">ချက်ပြုတ်နည်းလမ်း</h4>
+                    <p className="text-gray-600 text-sm mt-1 whitespace-pre-line">{recipe.instructions}</p>
+                  </div>
+                )}
+                
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-gray-50 rounded-lg p-2">
+                    <Clock className="h-5 w-5 text-gray-500 mx-auto" />
+                    <p className="text-xs text-gray-500 mt-1">ပြင်ဆင်ချိန်</p>
+                    <p className="text-sm font-medium">{recipe.prep_time} မိနစ်</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2">
+                    <Clock className="h-5 w-5 text-gray-500 mx-auto" />
+                    <p className="text-xs text-gray-500 mt-1">ချက်ချိန်</p>
+                    <p className="text-sm font-medium">{recipe.cook_time} မိနစ်</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2">
+                    <Users className="h-5 w-5 text-gray-500 mx-auto" />
+                    <p className="text-xs text-gray-500 mt-1">စားသုံးသူ</p>
+                    <p className="text-sm font-medium">{recipe.servings} ယောက်</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="border-t pt-4 mt-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  ပါဝင်ပစ္စည်းများ:
-                </p>
-                <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-3">
-                  {recipe.ingredients}
-                </p>
-              </div>
-
-              <div className="border-t pt-4 mt-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  ချက်ပြုတ်နည်း:
-                </p>
-                <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-3">
-                  {recipe.instructions}
-                </p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredRecipes.length === 0 && !showForm && (
+          ))}
+        </div>
+      ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500">
-            {searchTerm || selectedCuisine !== 'all'
-              ? 'ရှာဖွေမှု ရလဒ် မရှိပါ'
-              : 'ချက်ပြုတ်နည်းများ မရှိသေးပါ'}
-          </p>
-          <p className="text-gray-400 text-sm mt-2">
-            {searchTerm || selectedCuisine !== 'all'
-              ? 'အခြားသော ရှာဖွေမှု စကားလုံးများကို ကြိုးစားကြည့်ပါ'
-              : 'အပေါ်ရှိ "ချက်နည်းအသစ်" ခလုတ်ကို နှိပ်၍ စတင်ပါ'}
-          </p>
+          <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <ChefHat className="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">ချက်ပြုတ်နည်းများ မရှိပါ</h3>
+          <p className="text-gray-500 mb-6">ချက်ပြုတ်နည်းအသစ် ထည့်သွင်း၍ စတင်လိုက်ပါ</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="btn-primary inline-flex items-center space-x-2 hover-lift"
+          >
+            <Plus size={18} />
+            <span>ချက်နည်းအသစ်</span>
+          </button>
         </div>
       )}
     </div>

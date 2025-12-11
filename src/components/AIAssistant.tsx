@@ -159,7 +159,7 @@ export function AIAssistant() {
         {messages.length > 0 && (
           <button
             onClick={handleClearHistory}
-            className="btn-secondary flex items-center space-x-2 text-red-600 hover:bg-red-50 w-full sm:w-auto justify-center"
+            className="btn-secondary flex items-center space-x-2 text-red-600 hover:bg-red-50 w-full sm:w-auto justify-center hover-lift"
           >
             <Trash2 size={20} />
             <span>မှတ်တမ်းရှင်းမည်</span>
@@ -238,7 +238,7 @@ export function AIAssistant() {
                     isListening
                       ? 'bg-red-600 text-white hover:bg-red-700'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  } hover-lift`}
                   disabled={loading}
                 >
                   {isListening ? <MicOff size={20} /> : <Mic size={20} />}
@@ -249,7 +249,7 @@ export function AIAssistant() {
             <button
               type="submit"
               disabled={!inputMessage.trim() || loading}
-              className="btn-primary flex items-center justify-center"
+              className="btn-primary flex items-center justify-center hover-lift"
             >
               <Send size={20} />
             </button>
@@ -301,11 +301,11 @@ export function FamilyFinanceDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h2 className="heading-hero text-primary">Family Finance Dashboard</h2>
         <div className="flex space-x-2">
-          <button className="btn-secondary flex items-center space-x-2">
+          <button className="btn-secondary flex items-center space-x-2 hover-lift">
             <Filter size={18} />
             <span>Filter</span>
           </button>
-          <button className="btn-primary flex items-center space-x-2">
+          <button className="btn-primary flex items-center space-x-2 hover-lift">
             <Download size={18} />
             <span>Export</span>
           </button>

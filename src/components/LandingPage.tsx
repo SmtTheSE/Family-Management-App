@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Logo } from './Logo';
 import { useAuth } from '../contexts/AuthContext';
-import { Wallet, Home, ChefHat, ShoppingCart, FileText, Users } from 'lucide-react';
+import { Wallet, Home, ChefHat, ShoppingCart, FileText, Users, LogIn, UserPlus } from 'lucide-react';
 
 export function LandingPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -35,6 +35,17 @@ export function LandingPage() {
     }
   };
 
+  // Scroll to auth form
+  const scrollToAuth = (loginMode: boolean) => {
+    setIsLogin(loginMode);
+    setTimeout(() => {
+      const element = document.getElementById('auth-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   // Features data
   const features = [
     {
@@ -66,8 +77,41 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Header Navigation */}
+      <header className="absolute inset-x-0 top-0 z-50 backdrop-blur-md bg-white/30 border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Logo size="sm" />
+              <span className="ml-2 text-lg font-semibold text-gray-900">Family Manager</span>
+            </div>
+            <nav className="hidden md:flex space-x-8">
+              <a href="#features" className="text-gray-700 hover:text-gray-900 transition-colors">Features</a>
+              <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">About</a>
+              <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Contact</a>
+            </nav>
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => scrollToAuth(true)}
+                className="px-4 py-2 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple text-sm font-medium"
+              >
+                <LogIn className="inline mr-1 h-4 w-4" />
+                Sign In
+              </button>
+              <button 
+                onClick={() => scrollToAuth(false)}
+                className="px-4 py-2 rounded-lg bg-black/80 backdrop-blur-sm text-white hover:bg-black border border-white/20 transition-all duration-200 ease-apple text-sm font-medium"
+              >
+                <UserPlus className="inline mr-1 h-4 w-4" />
+                Sign Up
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden pt-16">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-1/2 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -90,7 +134,7 @@ export function LandingPage() {
                   <div className="rounded-md shadow">
                     <a
                       href="#features"
-                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-black md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple"
+                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-transparent text-base font-medium rounded-xl text-white bg-black hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
                     >
                       Learn More
                     </a>
@@ -98,7 +142,7 @@ export function LandingPage() {
                   <div className="mt-3 sm:mt-0 sm:ml-3">
                     <a
                       href="#"
-                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-transparent text-base font-medium rounded-md text-gray-800 bg-gray-100 hover:bg-gray-200 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple"
+                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-gray-300 text-base font-medium rounded-xl text-gray-800 bg-white/50 hover:bg-white/80 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
                     >
                       Live Demo
                     </a>
@@ -109,7 +153,11 @@ export function LandingPage() {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 hidden lg:block">
-          <div className="h-56 w-full bg-gradient-to-r from-gray-300 to-gray-400 sm:h-72 md:h-96 lg:w-full lg:h-full rounded-l-3xl shadow-2xl transform rotate-3 scale-105 opacity-90"></div>
+          <img 
+            src="/images/family-high-quality.jpg" 
+            alt="Family Management" 
+            className="h-56 w-full sm:h-72 md:h-96 lg:w-full lg:h-full rounded-l-3xl shadow-2xl transform rotate-3 scale-105 opacity-90 object-cover"
+          />
         </div>
       </div>
 
@@ -132,7 +180,7 @@ export function LandingPage() {
                 const Icon = feature.icon;
                 return (
                   <div key={index} className="relative group">
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gray-900 text-white group-hover:bg-black transition-colors duration-300">
+                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-gray-900 text-white group-hover:bg-black transition-colors duration-300">
                       <Icon className="h-6 w-6" />
                     </div>
                     <div className="ml-16">
@@ -161,7 +209,7 @@ export function LandingPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {/* Notes Preview */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-6 md:p-8 border border-white/50">
               <div className="flex items-center mb-6">
                 <FileText className="h-6 w-6 text-blue-600 mr-2" />
                 <h3 className="text-xl font-bold text-gray-900">မှတ်စုများ</h3>
@@ -197,14 +245,14 @@ export function LandingPage() {
               </div>
               
               <div className="mt-6">
-                <button className="btn-secondary w-full py-3">
+                <button className="w-full px-4 py-3 rounded-xl bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple font-medium">
                   မှတ်စုများကို ကြည့်ရန်
                 </button>
               </div>
             </div>
             
             {/* Contacts Preview */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-6 md:p-8 border border-white/50">
               <div className="flex items-center mb-6">
                 <Users className="h-6 w-6 text-green-600 mr-2" />
                 <h3 className="text-xl font-bold text-gray-900">ဆက်သွယ်ရန်များ</h3>
@@ -220,7 +268,7 @@ export function LandingPage() {
                     <p className="text-gray-600 text-sm">ကျန်းမာရေး</p>
                     <p className="text-gray-500 text-xs">၀၉၁၂၃၄၅၆၇၈</p>
                   </div>
-                  <button className="btn-secondary text-sm px-3 py-1">
+                  <button className="px-3 py-1 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple text-sm font-medium">
                     ခေါ်မည်
                   </button>
                 </div>
@@ -234,14 +282,14 @@ export function LandingPage() {
                     <p className="text-gray-600 text-sm">မိသားစု</p>
                     <p className="text-gray-500 text-xs">၀၉၈၇၆၅၄၃၂၁</p>
                   </div>
-                  <button className="btn-secondary text-sm px-3 py-1">
+                  <button className="px-3 py-1 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/30 transition-all duration-200 ease-apple text-sm font-medium">
                     စာပို့မည်
                   </button>
                 </div>
               </div>
               
               <div className="mt-6">
-                <button className="btn-primary w-full py-3">
+                <button className="w-full px-4 py-3 rounded-xl bg-black/80 backdrop-blur-sm text-white hover:bg-black border border-white/20 transition-all duration-200 ease-apple font-medium">
                   ဆက်သွယ်ရန်များကို ကြည့်ရန်
                 </button>
               </div>
@@ -251,7 +299,7 @@ export function LandingPage() {
       </div>
 
       {/* Auth Section */}
-      <div className="py-12 bg-gradient-to-br from-gray-50 to-white">
+      <div id="auth-section" className="py-12 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
             <div className="mb-10 lg:mb-0">
@@ -292,7 +340,7 @@ export function LandingPage() {
               </div>
             </div>
             
-            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-auto apple-card-glass">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 w-full max-w-md mx-auto border border-white/50">
               <div className="text-center mb-6 sm:mb-8">
                 <div className="flex justify-center mb-3 sm:mb-4">
                   <Logo size="md" />
@@ -315,7 +363,7 @@ export function LandingPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                       placeholder="Your name"
                       required={!isLogin}
                     />
@@ -330,7 +378,7 @@ export function LandingPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                     placeholder="you@example.com"
                     required
                   />
@@ -344,7 +392,7 @@ export function LandingPage() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent input-apple"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                     placeholder="••••••••"
                     required
                     minLength={6}
@@ -352,7 +400,7 @@ export function LandingPage() {
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                  <div className="bg-red-50/80 text-red-600 p-3 rounded-xl text-sm backdrop-blur-sm">
                     {error}
                   </div>
                 )}
@@ -360,7 +408,7 @@ export function LandingPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center"
+                  className="w-full px-4 py-3 rounded-xl bg-black/80 backdrop-blur-sm text-white hover:bg-black border border-white/20 transition-all duration-200 ease-apple font-medium flex items-center justify-center"
                 >
                   {loading ? (
                     <span className="flex items-center">
