@@ -87,6 +87,7 @@ export function LandingPage() {
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-700 hover:text-gray-900 transition-colors">Features</a>
+              <a href="#developer" className="text-gray-700 hover:text-gray-900 transition-colors">Developer</a>
               <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">About</a>
               <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Contact</a>
             </nav>
@@ -295,6 +296,37 @@ export function LandingPage() {
                   ဆက်သွယ်ရန်များကို ကြည့်ရန်
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Developer Section */}
+      <div id="developer" className="py-12 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-6 md:p-8 border border-white/50 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Sitt Min Thar</h2>
+            <p className="text-lg text-gray-600 mb-2">Full Stack Developer</p>
+            <p className="text-gray-700 mb-8">
+              A passionate developer focused on creating intuitive and efficient web applications. 
+              With expertise in modern web technologies, I strive to build applications that provide 
+              exceptional user experiences while maintaining clean, maintainable code.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a 
+                href="https://sittmintharportfolio.netlify.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 rounded-xl bg-black text-white hover:bg-gray-800 transition-colors duration-200"
+              >
+                View Portfolio
+              </a>
+              <a 
+                href="mailto:sittminthar005@gmail.com" 
+                className="px-5 py-2.5 rounded-xl bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              >
+                Contact Me
+              </a>
             </div>
           </div>
         </div>

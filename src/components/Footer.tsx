@@ -82,7 +82,7 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li className="flex items-start space-x-3">
                 <Phone size={18} className="text-gray-400 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-600">+95 0898808753</span>
+                <span className="text-gray-600">0898808753</span>
               </li>
               <li className="flex items-start space-x-3">
                 <Mail size={18} className="text-gray-400 mt-0.5 flex-shrink-0" />
@@ -97,7 +97,7 @@ export function Footer({ onNavigate }: FooterProps) {
             &copy; 2025 Family Management. All rights reserved.
           </div>
           <div className="mt-4 md:mt-0 text-gray-500 text-sm">
-            Developed by Sitt Min Thar with love ❤️
+            Developed by <a href="https://sittmintharportfolio.netlify.app/" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900 underline">Sitt Min Thar</a> with love ❤️
           </div>
         </div>
       </div>
