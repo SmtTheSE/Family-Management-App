@@ -111,7 +111,7 @@ export function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden pt-16">
+      <div className="relative overflow-visible pt-16">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-1/2 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -119,45 +119,47 @@ export function LandingPage() {
           <div className="absolute top-1/2 left-1/2 w-64 h-64 md:w-96 md:h-96 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
         
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="relative z-10 pb-8 bg-transparent sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-            <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-              <div className="sm:text-center lg:text-left">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-gray-900">
-                  <span className="block">Manage Your Family</span>
-                  <span className="block text-gray-800 mt-2">Like Never Before</span>
-                </h1>
-                <p className="mt-3 text-base sm:text-lg md:text-xl lg:text-xl text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                  The ultimate family management solution. Organize your home, recipes, shopping lists, expenses, notes & contacts - all in one beautifully designed app.
-                </p>
-                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                  <div className="rounded-md shadow">
-                    <a
-                      href="#features"
-                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-transparent text-base font-medium rounded-xl text-white bg-black hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
-                    >
-                      Learn More
-                    </a>
-                  </div>
-                  <div className="mt-3 sm:mt-0 sm:ml-3">
-                    <a
-                      href="#"
-                      className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-gray-300 text-base font-medium rounded-xl text-gray-800 bg-white/50 hover:bg-white/80 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
-                    >
-                      Live Demo
-                    </a>
+        <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
+              <main className="mt-10 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28">
+                <div className="text-center lg:text-left">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-gray-900">
+                    <span className="block">Manage Your Family</span>
+                    <span className="block text-gray-800 mt-2">Like Never Before</span>
+                  </h1>
+                  <p className="mt-3 text-base sm:text-lg md:text-xl lg:text-xl text-gray-500 sm:mt-5 md:mt-5">
+                    The ultimate family management solution. Organize your home, recipes, shopping lists, expenses, notes & contacts - all in one beautifully designed app.
+                  </p>
+                  <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-3">
+                    <div className="rounded-md shadow">
+                      <a
+                        href="#features"
+                        className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-transparent text-base font-medium rounded-xl text-white bg-black hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
+                      >
+                        Learn More
+                      </a>
+                    </div>
+                    <div>
+                      <a
+                        href="#"
+                        className="w-full flex items-center justify-center px-6 py-3 md:px-8 md:py-4 border border-gray-300 text-base font-medium rounded-xl text-gray-800 bg-white/50 hover:bg-white/80 md:py-4 md:text-lg md:px-10 transition-all duration-300 ease-apple backdrop-blur-sm"
+                      >
+                        Live Demo
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </main>
+              </main>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <img 
+                src="/images/family-high-quality.jpg" 
+                alt="Family Management" 
+                className="rounded-2xl shadow-2xl w-full max-w-lg object-cover h-auto"
+              />
+            </div>
           </div>
-        </div>
-        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 hidden lg:block">
-          <img 
-            src="/images/family-high-quality.jpg" 
-            alt="Family Management" 
-            className="h-56 w-full sm:h-72 md:h-96 lg:w-full lg:h-full rounded-l-3xl shadow-2xl transform rotate-3 scale-105 opacity-90 object-cover"
-          />
         </div>
       </div>
 
